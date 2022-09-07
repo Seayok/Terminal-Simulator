@@ -54,6 +54,22 @@ def ls(current, user, path, arg):
     return res
 
 
+def ancestor(current):
+        while current.path != '':
+            current = goto(current, ['..'])
+            if current[2] == 'Permission denied':
+                return current
+            current = current[0]
+        current = [current, '',"Success"]
+        return current
+
+
+def cp(current, path, path_2):
+    pass
+
+def mv(current, path, path_2):
+    pass
+
 def rmdir(current, user, path):
     name = path[-1]
     destination = get_path(current, path)
@@ -73,7 +89,6 @@ def rmdir(current, user, path):
     else:
         print('rmdir: Not a directory')
 
-
 def rm_path(current, user, path):
     name = path[-1]
     path.pop(-1)
@@ -92,16 +107,6 @@ def rm_path(current, user, path):
                 destination.parent.children.pop(name)        
     else:
         print('rm: No such file')
-
-    
-def ancestor(current):
-    while current.path != '':
-        current = goto(current, ['..'])
-        if current[2] == 'Permission denied':
-            return current
-        current = current[0]
-    current = [current, '',"Success"]
-    return current
 
 
 def get_path(current, path):
@@ -134,7 +139,6 @@ def goto(current, path):
             return [current, name, 'Destination was a file']
     else:
         return  [current, name, "No such file or directory"]
-
 
 def create(current, owner, name, command):
     if command == "mkdir":
@@ -221,7 +225,7 @@ def check_and_split_syntax(cmd):
     path = []
     arg_list = []
     check = True
-    path_list = [path]
+    path_list = [[]]
     if command in ('exit', 'pwd') and remain != '':
         check = False
     elif command in ('touch', 'cd', 'rm', 'rmdir', 'mkdir', 'ls'):
@@ -240,7 +244,7 @@ def check_and_split_syntax(cmd):
             check = False
         else:
             path_list = [path]
-    elif command in ('cp', 'mv', ''):
+    elif command in ('cp', 'mv'):
         path = check_path(remain)
         path_2 = check_path(remain)
     return (check,  command, path_list, arg_list)
@@ -253,7 +257,7 @@ class Node:
         self.path = path
         self.owner = owner
         self.permission = permission
-        
+
 
 def main():
     user_list = []
@@ -283,6 +287,7 @@ def main():
         if command == "ls":
             print(ls(current, active_user, path, arg_list), end='')
         elif command == "exit":
+            print(f"bye, {active_user}")
             exit(0)
         elif command == "cd":
             result = get_path(current, path)
