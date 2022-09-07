@@ -5,12 +5,14 @@ def ls(current, user, path, arg):
         name = path[-1]
         path.pop(-1)
         destination = get_path(current, path)
-        if type(destination) == list or name not in destination.children:
-            return "ls: No such file or directory\n"
-        elif type(destination) == str:
+        if destination[2] == 'Permission denied':
             return "ls: Permission denied\n"
+        elif destination[2] != "Success":
+            return "ls: No such file or directory\n"
         else:
+            destination = destination[0]
             target = destination.children[name]
+    daddy = ancestor(target)
     #neu la file neu la directory handle error
     #flag d
     if target.permission[0] == '-' or '-d' in arg:
@@ -23,8 +25,7 @@ def ls(current, user, path, arg):
         #root children is root
         if destination.path == "":
             tmp.pop(0)
-
-    if destination.permission[1] == '-':
+    if destination.permission[1] == '-' or daddy[2] == "Permission denied":
         return "ls: Permission denied\n"
     res = ''
 #flag a
@@ -57,16 +58,20 @@ def rmdir(current, user, path):
     name = path[-1]
     destination = get_path(current, path)
 #directory not found????
-    if type(destination) == list:
-        print('rmdir: Not a directory')
-    elif type(destination) == str or destination.parent.permission[2] == '-':
+    if destination[2] == "Permission denied":
         print('rmdir: Permssion denied')
-    elif len(destination.children) > 1 or (destination.path != '' and len(destination.children) > 0):
-        print("rmdir: Directory not empty")
-    elif destination == current:
-        print('rmdir: Cannot remove pwd')
+    elif destination[2] == "Success":
+        destination = destination[0]
+        if len(destination.children) > 1 or (destination.path != '' and len(destination.children) > 0):
+            print("rmdir: Directory not empty")
+        elif destination.parent.permission[2] == '-':
+            print('rmdir: Permission denied')
+        elif destination == current:
+            print('rmdir: Cannot remove pwd')
+        else:
+            destination.parent.children.pop(name)
     else:
-        destination.parent.children.pop(name)
+        print('rmdir: Not a directory')
 
 
 def rm_path(current, user, path):
@@ -74,43 +79,53 @@ def rm_path(current, user, path):
     path.pop(-1)
     destination = get_path(current, path)
     #directory not found????
-    if type(destination) == list:
-        print('rm: No such file')
-    elif type(destination) == str or destination.parent.permission[2] == '-' or destination.permission[2] == '-':
+    if destination[2] == "Permission denied":
         print('rm: Permission denied')
-    elif name in destination.children:
-        if destination.children[name].permission[0] == 'd':
-            print('rm: Is a directory')
-        else: 
-            destination.parent.children.pop(name)        
+    elif destination[2] == "Success":
+        destination = destination[0]
+        if destination.parent.permission[2] == '-' or destination.permission[2] == '-':
+            print('rm: Permission denied')
+        elif name in destination.children:
+            if destination.children[name].permission[0] == 'd':
+                print('rm: Is a directory')
+            else: 
+                destination.parent.children.pop(name)        
     else:
         print('rm: No such file')
-    
 
+    
 def ancestor(current):
     while current.path != '':
-        current = goto(current,['..'])
+        current = goto(current, ['..'])
+        if current[2] == 'Permission denied':
+            return current
+        current = current[0]
+    current = [current, '',"Success"]
     return current
 
 
 def get_path(current, path):
     if len(path) > 0 and path[0] == '':
-        current = ancestor(current)
+        while current.path != '':
+            result = ancestor(current)
+            if result[2] == 'Permission denied':
+                result = ancestor(current[0].parent)
+            current = result[0]
     return goto(current, path)
 
 
 def goto(current, path):
-    if current.permission[3] != 'x':
-        return 'Permission denied'
     if len(path) == 0:
-        return current
+        return [current, path, 'Success'] 
     name = path[0]
     path.pop(0)
-    if name == ".":
+    if current.permission[3] != 'x':
+        return [current, name, 'Permission denied']
+    elif name == ".":
         return goto(current, path)
     elif name == "..":
         return goto(current.parent, path)
-    if name in current.children:
+    elif name in current.children:
         child = current.children[name]
         if child.permission[0] == 'd':
             current = current.children[name]
@@ -121,46 +136,46 @@ def goto(current, path):
         return  [current, name, "No such file or directory"]
 
 
-def mkdir(current, owner, path, arg):
-    res = prepare(current, owner, path, arg)
-    if type(res) == str:
-        print(f'mkdir: {res}')
+def create(current, owner, name, command):
+    if command == "mkdir":
+        permission = 'drwxr-x' 
     else:
-        create(res[0], res[1], res[2])
-
-
-def create(current, owner, name):
+        permission = '-rw-r--'
     path = current.path + '/' + name
-    new_folder = Node (current, {}, 'drwxr-x', owner, path)
-    current.children[name] = new_folder
+    new = Node (current, {}, permission, owner, path)
+    current.children[name] = new
 
-
-def prepare(current, owner, path, arg=[]):
+#in trong function?
+def make(current, owner, path, command, arg=[]):
     name = path[-1]
     path.pop(-1)
     destination = get_path(current, path) 
     #doi ten lai
     daddy = ancestor(current) 
-    #rut gon cho nay
-    if type(destination) == list:        
+    if destination[2] == 'Permission denied' or daddy[2] == 'Permission denied':
+        return f"{command}: Permssion denied"
+    elif destination[2] == 'Success':
+            destination = destination[0]
+            if destination.permission[2] != 'w':
+                return f"{command}: Permission denied"
+            elif name in destination.children:
+                return f"{command}: File exists"
+    else:        
         if '-p' in arg:
             path.append('tmp')
             subname = destination[1]
             destination = destination[0]
             if destination.permission[2] == '-':
-                return "Permission denied" 
+                return f"{command}: Permission denied" 
             while len(path) > 0:
-                create(destination, owner, subname)
+                create(destination, owner, subname, command)
                 destination = destination.children[subname]
                 subname = path[0]
                 path.pop(0)
         else:
-            return"Ancestor directory does not exist"
-    if destination == 'Permission denied' or daddy == 'Permission denied' or destination.permission[2] == '-':
-        return "Permssion denied"
-    if name in destination.children:
-        return "File exists"
-    return [destination, owner, name]
+            return f"{command}: Ancestor directory does not exist"
+    create(destination, owner, name, command)
+    return "Success"
 
 
 def check_path(path):
@@ -169,17 +184,17 @@ def check_path(path):
     for syntax in valid_syntax:
         path_check = path_check.replace(syntax, "a")
     if not path_check.isalnum():
-        return False
+        return (False, [])
     elif "\"" in path:
         if path.count("\"") == 2 and path[-1] == "\"" and path[0] =="\"" and " " in path:
             res_path = path[1:-1]
         else:
-            return False
+            return (False, [])
     elif " " in path:
-        return False
+        return (False, [])
     else:
         res_path = path
-    return res_path.split("/")
+    return (True, res_path.split("/"))
 
 
 def check_arg(remain, arguments, arg_list):
@@ -189,15 +204,15 @@ def check_arg(remain, arguments, arg_list):
             arg_list.append(arg)
             remain = remain[3:]
         else:
-            return False
+            return (False, '')
 #if ls
     if "-l" in arguments and remain in arguments and not remain in arg_list:
         arg_list.append(remain)
         remain = ''
-    return remain
+    return (True, remain)
     
             
-def check_syntax(cmd):
+def check_and_split_syntax(cmd):
     command = cmd.split(' ', 1)[0]
     remain = cmd.replace(command, '')
     if remain != '':
@@ -205,46 +220,30 @@ def check_syntax(cmd):
     path_2 = []
     path = []
     arg_list = []
+    check = True
     path_list = [path]
     if command in ('exit', 'pwd') and remain != '':
-        remain = False
+        check = False
     elif command in ('touch', 'cd', 'rm', 'rmdir', 'mkdir', 'ls'):
         if command == "ls": 
-            remain = check_arg(remain, ["-a", "-d", "-l"], arg_list)
+            check, remain = check_arg(remain, ["-a", "-d", "-l"], arg_list)
         elif command in 'mkdir': 
-            remain = check_arg(remain, ["-p"], arg_list)
+            check, remain = check_arg(remain, ["-p"], arg_list)
         #su va ls co the khong nhan argument
-        if type(remain) == str and not (command == 'ls' and remain == ''):
-            path = check_path(remain)
+        if check == True and not (command == 'ls' and remain == ''):
+            check, path = check_path(remain)
             path_list = [path] 
     elif command in ('adduser', 'deluser', 'su'):
-        path = check_path(remain)
+        if not (command == "su" and remain == ''):
+            check, path = check_path(remain)
         if len(path) > 1:
-            remain = False
+            check = False
         else:
             path_list = [path]
     elif command in ('cp', 'mv', ''):
         path = check_path(remain)
         path_2 = check_path(remain)
-    if path == False or path_2 == False or remain == False:
-        return command
-    else:
-        return {"command": command,"path" : path_list, "arg" : arg_list}
-
-
-def touch(current, owner, path):
-    res = prepare(current, owner, path)
-    if type(res) == str:
-        if res == 'File exists':
-            pass
-        else:
-            print(f'touch: {res}')
-    else:
-        current = res[0]
-        name = res[2]
-        path = current.path + '/' + name 
-        new_file = Node(current, "file", '-rw-r--', owner, path)
-        current.children[name] = new_file
+    return (check,  command, path_list, arg_list)
 
 
 class Node:
@@ -258,50 +257,51 @@ class Node:
 
 def main():
     user_list = []
-    user = 'root'
+    active_user = 'root'
     root = Node( None, {}, 'drwxr-x', 'root', '') 
     root.parent = root
     root.children[''] = root
     current = root
-    user_list.append(current)
+    user_list.append(active_user)
 
     while True:
         display = f"{current.path}$ "
         if current == root:
             display = f"/{current.path}$ "
-        cmd = input(user + ":" + display).strip()
+        cmd = input(active_user + ":" + display).strip()
         if cmd == '':
             continue
-        res = check_syntax(cmd)
-        if type(res) == str:
-            print(f'{res}: Invalid syntax')
+
+        valid, command, path_list, arg_list = check_and_split_syntax(cmd)
+
+        if not valid:
+            print(f'{command}: Invalid syntax')
             continue
         else:
-            command = res["command"]
-            path = res["path"][0]
-            arg = res["arg"]
+            path = path_list[0]
+
         if command == "ls":
-            print(ls(current, user, path, arg), end='')
+            print(ls(current, active_user, path, arg_list), end='')
         elif command == "exit":
             exit(0)
         elif command == "cd":
             result = get_path(current, path)
-            if type(result) != list:
-                current = result
+            if result[2] == "Success":
+                current = result[0]
             else:
                 print(f'cd: {result[2]}')
-        elif command == "touch":
-            touch(current, user, path)
-        elif command == "mkdir":
-            mkdir(current, user, path, arg)            
+        elif command in ("touch", "mkdir"):
+            res = make(current, active_user, path, command, arg_list)
+            if res != "Success":
+                print(res)            
         elif command == "pwd":
             print(display[:-2])
         elif command == 'rmdir':
-            rmdir(current, user, path)
+            rmdir(current, active_user, path)
         elif command == 'rm':
-            rm_path(current, user, path)
+            rm_path(current, active_user, path)
         elif command == 'adduser':
-            if user == 'root':
+            if active_user == 'root':
                 if path[0] in user_list:
                     print('adduser: The user already exist')
                 else:
@@ -309,9 +309,28 @@ def main():
             else:
                 print('adduser: Permission denied')
         elif command == 'su':
-            pass
+            if len(path) == 0:
+                active_user = 'root'
+            else:
+                user = path[0]
+                if user in user_list:
+                    active_user = user
+                else:
+                    print('su: Invalid user')
         elif command == "deluser":
-            pass
+            if active_user == 'root':
+                if path[0] == 'root':
+                    print('''WARNING: You are just about to delete the root account
+Usually this is never required as it may render the whole system unusable
+If you really want this, call deluser with parameter --force
+(but this `deluser` does not allow `--force`, haha)
+Stopping now without having performed any action''')
+                elif path[0] not in user_list:
+                    print('deluser: The user does not exist')
+                else:
+                    user_list.pop(path[0])
+            else:
+                print('deluser: Permission denied') 
         elif command == '':
             pass
         else:
