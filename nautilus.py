@@ -510,7 +510,10 @@ def main():
             if res != "Success":
                 print(res)            
         elif command == "pwd":
-            print(current.path)
+            if current == root:
+                print('/')
+            else:
+                print(current.path)
         elif command == 'rmdir':
             rmdir(current, active_user, path)
         elif command == 'rm':
