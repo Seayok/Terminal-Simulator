@@ -86,6 +86,12 @@ class Node:
         self.children[name] = new
 
 
+def Error_handling(num, command):
+    Error_list = { 1: "Permission denied", 2: "No such file or directory", }
+    if num != 0:
+        print(f'{command}: {Error_list[num]}')
+
+
 def check_permission(current, user, ancestor_x = False, parent_w = False,\
                     dir_x = False, file_r = False, file_w = False, parent_r=False):
     a_x = ancestor_x and not current.check_ancestor(user)
@@ -97,6 +103,7 @@ def check_permission(current, user, ancestor_x = False, parent_w = False,\
     return not(a_x or p_w or d_x or f_r or f_w or p_r)
 
 
+
 def ls(current, user, path, arg):  
     if len(path) == 0 :
         target = current
@@ -105,7 +112,7 @@ def ls(current, user, path, arg):
         if target["Error_mes"] == "Success":
             target = target["Stop_at"]
         else:
-            return "ls: No such file or directory\n"
+            return 2
     
     #neu la file neu la directory handle error
     #flag d
@@ -113,7 +120,7 @@ def ls(current, user, path, arg):
     if target.type == '-' or '-d' in arg:
         name_list = [target.path.split("/")[-1]]
         if not check_permission(target, user, ancestor_x=True, parent_r=True):
-            return "ls: Permission denied\n"
+            return 1
     else:
         parent = target
         name_list = sorted(target.children.keys())
@@ -121,7 +128,7 @@ def ls(current, user, path, arg):
         if target.path == "":
             name_list.pop(0)
         if not check_permission(target, user, ancestor_x=True, file_r=True):
-            return "ls: Permission denied\n"
+            return 1
     
     res = ''
     #flag a
@@ -144,7 +151,8 @@ def ls(current, user, path, arg):
             if item == "":
                 item = '/'
             res += item + '\n' 
-    return res
+    print(res)
+    return 0
 
 
 def chmod(current, user, path, format_string, arg):
@@ -152,7 +160,7 @@ def chmod(current, user, path, format_string, arg):
     if target["Error_mes"] == "Success":
         target = target["Stop_at"]
         if user not in ('root', target.owner):
-            print('chmod: Operation not permitted')
+            return 3
         else:
             u = ["-"] * 3
             o = ["-"] * 3
@@ -371,9 +379,11 @@ def check_double_path(remain):
                 path_2 = remain[index:]
             res = check_path(path_1) and check_path(path_2) and space == ' '
         elif remain.count("\"") == 4 and remain[0] == "\"" and remain [-1] == "\"":
-                path = path.split('\"')
+                path = remain.split('\"')
                 path_1, space, path_2 = path[1:4]
-                res = check_path(path_1) and check_path(path_2) and space == ' '
+                path_1_check = f'\"{path_1} \"'
+                path_2_check = f'\"{path_2} \"'
+                res = check_path(path_1_check) and check_path(path_2_check) and space == ' '
     elif remain.count(' ') == 1:
         path_1, path_2 = remain.split(' ')
         res = check_path(path_1) and check_path(path_2)
@@ -571,4 +581,5 @@ Stopping now without having performed any action''')
 
 if __name__ == '__main__':
     main()
-# cp "a a/asdf/asdf" "b b/asdf/asdf"
+#permission use bitwise
+#error management
