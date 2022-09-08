@@ -56,7 +56,7 @@ class Node:
                     path.pop(0)
                     continue
                 else:
-                    return {"Stop_at": current, "Error_mes": "Destination was a file"}
+                    return {"Stop_at": current, "Error_mes": "Destination is a file"}
             else:
                 return  {"Stop_at": current, "Error_mes": "No such file or directory"}
 
@@ -263,7 +263,7 @@ def make(current, user, path, command, arg=[]):
 
 def rm_path(current, user, path):
     name = path[-1]
-    target = current.cd(path)
+    target = current.cf(path)
     if target["Error_mes"] == "Success":
         target = target["Stop_at"]
         if not check_permission(current, user, ancestor_x=True, file_w=True, parent_w=True):
@@ -271,7 +271,7 @@ def rm_path(current, user, path):
         elif target.type == 'd':
             print('rm: Is a directory')
         else:
-            target.parent.pop(name)
+            target.parent.children.pop(name)
     else:
         print("rm: No such file")
     
@@ -290,7 +290,7 @@ def rmdir(current, user, path):
         elif target == current:
             print('rmdir: Cannot remove pwd')
         else:
-            target.parent.pop(name)
+            target.parent.children.pop(name)
     else:
         print("rm: No such file") 
 
