@@ -179,7 +179,7 @@ def chmod(current, user, path, format_string, arg):
                 perm[1] = 'w'
             if 'x' in format_string:
                 perm[2] = 'x'
-
+            
             full_perm = u + o
             child_list = []
             if "-r" in arg:
@@ -348,19 +348,20 @@ def mv_cp(current, user, path, path_2, command):
     
 
 def check_format_string(remain):
-    if len(remain) < 3:
+    if len(remain) < 1:
         return False
     index = 0
     while index  < len(remain) and remain[index] in 'uoa':
         index += 1
-    if index == 0 or index == len(remain) - 1:
+    if (index == 0 and remain[0] not in '-+=') or index == len(remain):
         return False
     elif remain[index] not in '-+=':
         return False
     else:
-        for char in remain[index + 1:]:
-            if char not in 'rwx':
-                return False
+        if len(remain) - index > 1:
+            for char in remain[index + 1:]:
+                if char not in 'rwx':
+                    return False
     return True
 
 
@@ -457,7 +458,7 @@ def check_and_split_syntax(cmd):
     elif command in ('adduser', 'deluser', 'su'):
         if not (command == "su" and remain == ''):
             valid_user = check_user(remain)
-            user = remain
+            user = remain.strip("\"")
     elif command in ('cp', 'mv'):
         valid_path, path_1, path_2 = check_double_path(remain)
         path_1 = path_1.strip("\"").split("/")
@@ -473,7 +474,7 @@ def check_and_split_syntax(cmd):
             else:
                 valid_path, path_1, path = check_double_path(remain)
                 if "/" not in path_1:
-                    user = path_1
+                    user = path_1.strip("\"")
             path = path.strip("\"").split("/")
             path_list = [path]
 
