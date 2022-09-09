@@ -256,7 +256,7 @@ def make(current, user, path, command, arg=[]):
 
     else:        
         if '-p' in arg:
-            if not check_permission(current, user, ancestor_x=True, parent_w=True):
+            if not check_permission(destination["Stop_at"], user, ancestor_x=True, parent_w=True):
                 return 1
             destination = destination["Stop_at"]
             path.append(name)
@@ -275,7 +275,7 @@ def rm_path(current, user, path):
     target = current.cf(path)
     if target["Error_mes"] == "Success":
         target = target["Stop_at"]
-        if not check_permission(current, user, ancestor_x=True, file_w=True, parent_w=True):
+        if not check_permission(target, user, ancestor_x=True, file_w=True, parent_w=True):
             return 1
         elif target.type == 'd':
             return 5
@@ -291,7 +291,7 @@ def rmdir(current, user, path):
     target = current.cd(path)
     if target["Error_mes"] == "Success":
         target = target["Stop_at"]
-        if not check_permission(current, user, ancestor_x=True, parent_w=True):
+        if not check_permission(target, user, ancestor_x=True, parent_w=True):
             return 1
         elif target.type == '-':
             return 8
@@ -468,8 +468,11 @@ def check_and_split_syntax(cmd):
         valid_arg, remain = check_arg(remain, ["-r"], arg_list)
         if valid_arg:
             if command == "chmod":
-                format_string, path = remain.split(' ', 1)
+                format_string = remain.split(' ', 1)[0]
                 valid_format = check_format_string(format_string)
+                path = remain.replace(format_string, '')
+                if path != '':
+                    path = path[1:]
                 valid_path = check_path(path)
             else:
                 valid_path, path_1, path = check_double_path(remain)
