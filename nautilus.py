@@ -459,7 +459,7 @@ def check_and_split_syntax(cmd):
     if command in ('exit', 'pwd') and remain != '':
         valid = False
 
-    elif command in ('touch', 'cd', 'xoadikiucdoita', 'rmdir', 'mkdir', 'ls'):
+    elif command in ('touch', 'cd', 'rm', 'rmdir', 'mkdir', 'ls'):
         if command == "ls": 
             valid_arg, remain = check_arg(remain, ["-a", "-d", "-l"], arg_list)
         elif command in 'mkdir': 
@@ -549,7 +549,7 @@ def main():
                 print(current.path)
         elif command == 'rmdir':
             Error_handling(rmdir(current, active_user, path), command)
-        elif command == 'xoadikiucdoita':
+        elif command == 'rm':
             Error_handling(rm_path(current, active_user, path), command)
         elif command == 'adduser':
             if active_user == 'root':
