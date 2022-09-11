@@ -65,13 +65,9 @@ class Node:
         name = path[-1]
         path.pop(-1)
         destination = self.cd(path)
-        if destination["Error_mes"] == "Success":
-            if name in destination['Stop_at'].children:
+        if destination["Error_mes"] == "Success" and name in destination['Stop_at'].children:
                 current = destination['Stop_at'].children[name]
                 return {"Stop_at": current, "Error_mes": "Success"}
-            else:
-                destination['Error_mes'] = "No such file or directory"
-                return destination
         else:
             return destination
     
@@ -116,6 +112,8 @@ def ls(current, user, path, arg):
         else:
             return 2
     
+    res = ''
+    
     #neu la file neu la directory handle error
     #flag d
     parent = target.parent
@@ -123,6 +121,7 @@ def ls(current, user, path, arg):
         name_list = [target.path.split("/")[-1]]
         if not check_permission(target, user, ancestor_x=True, parent_r=True):
             return 1
+
     else:
         parent = target
         name_list = sorted(target.children.keys())
@@ -131,27 +130,21 @@ def ls(current, user, path, arg):
             name_list.pop(0)
         if not check_permission(target, user, ancestor_x=True, file_r=True):
             return 1
-    
-    res = ''
+
     #flag a
     if "-a" not in arg:
-        del_arr = []
         for item in name_list:
             if len(item) > 0 and item[0] == '.':
-                del_arr.append(item)
-        for i in del_arr:
-            name_list.pop(name_list.index(i))
+                name_list.remove(item)
+
     #flag l
-    if "-l" in arg:
-        for item in name_list:
-            child = parent.children[item]
-            if item == "":
-                item = '/'
+    for item in name_list:
+        child = parent.children[item]
+        if item == "":
+            item = '/'
+        if "-l" in arg:
             res += child.type + child.all_permission + ' ' + child.owner + ' ' + item + '\n'
-    else:
-        for item in name_list:
-            if item == "":
-                item = '/'
+        else:
             res += item + '\n' 
     print(res, end='')
     return 0
@@ -159,33 +152,39 @@ def ls(current, user, path, arg):
 
 def chmod(current, user, path, format_string, arg):
     target = current.cf(path)
+
     if target["Error_mes"] == "Success":
+
         target = target["Stop_at"]
-        if user not in ('root', target.owner):
-            return 3
-        else:
-            u = ["-"] * 3
-            o = ["-"] * 3
-            perm = ["-"] * 3
-            format_string = format_string.replace('a', 'uo')
-            if 'o' in format_string:
-                o = perm
-            if 'u' in format_string:
-                u = perm
-            
-            if 'r' in format_string:
-                perm[0] = 'r'
-            if 'w' in format_string:
-                perm[1] = 'w'
-            if 'x' in format_string:
-                perm[2] = 'x'
-            
-            full_perm = u + o
-            child_list = []
-            if "-r" in arg:
-                child_list = bfs([target])
-            child_list.append(target)
-            for child in child_list:
+        u = ["-"] * 3
+        o = ["-"] * 3
+        perm = ["-"] * 3
+        format_string = format_string.replace('a', 'uo')
+        if 'o' in format_string:
+            o = perm
+        if 'u' in format_string:
+            u = perm
+        
+        if 'r' in format_string:
+            perm[0] = 'r'
+        if 'w' in format_string:
+            perm[1] = 'w'
+        if 'x' in format_string:
+            perm[2] = 'x'
+        
+        full_perm = u + o
+
+        child_list = []
+        if "-r" in arg:
+            child_list = bfs([target])
+        child_list.append(target)
+
+        for child in child_list:
+            if not check_permission(child, user, ancestor_x=True):
+                Error_handling(1, 'chmod')
+            elif user not in ('root', child.owner):
+                Error_handling(3, 'chmod')
+            else:
                 permission = list(child.all_permission)
                 if '=' in format_string:
                     if 'u' in format_string:
@@ -201,7 +200,8 @@ def chmod(current, user, path, format_string, arg):
                         if full_perm[index] != "-":
                             permission[index] = '-'
                 child.all_permission = ''.join(permission)
-            return 0
+                
+        return 0
     else:
         return 2
 
@@ -273,8 +273,10 @@ def make(current, user, path, command, arg=[]):
 def rm_path(current, user, path):
     name = path[-1]
     target = current.cf(path)
+
     if target["Error_mes"] == "Success":
         target = target["Stop_at"]
+
         if not check_permission(target, user, ancestor_x=True, file_w=True, parent_w=True):
             return 1
         elif target.type == 'd':
@@ -282,6 +284,7 @@ def rm_path(current, user, path):
         else:
             target.parent.children.pop(name)
             return 0
+
     else:
         return 7
     
@@ -289,8 +292,10 @@ def rm_path(current, user, path):
 def rmdir(current, user, path):
     name = path[-1]
     target = current.cd(path)
+
     if target["Error_mes"] == "Success":
         target = target["Stop_at"]
+
         if not check_permission(target, user, ancestor_x=True, parent_w=True):
             return 1
         elif target.type == '-':
@@ -302,6 +307,7 @@ def rmdir(current, user, path):
         else:
             target.parent.children.pop(name)
             return 0
+
     else:
         return 7
 
@@ -314,13 +320,17 @@ def mv_cp(current, user, path, path_2, command):
     name = path_2[-1]
     path_2.pop(-1)
     dst = current.cd(path_2)
+
     if src["Error_mes"] == "Success" and dst["Error_mes"] == "Success":
         src = src['Stop_at']
         dst = dst['Stop_at']
+
         if file_name not in src.children:
             return 7
+
         src = src.children[file_name]
         test_child = Node(dst, {}, "-"*7, '', '')
+
         if command == "mv":
             check = check_permission(src, user, ancestor_x=True, parent_w=True)
             check_2 = check_permission(test_child, user, ancestor_x=True, parent_w=True)
@@ -328,6 +338,7 @@ def mv_cp(current, user, path, path_2, command):
         else:
             check = check_permission(src, user, ancestor_x=True, file_r=True)
             check_2 = check_permission(test_child, user, ancestor_x=True, parent_w=True)
+
         if not(check and check_2):
             return 1
         elif name in dst.children:
@@ -343,6 +354,7 @@ def mv_cp(current, user, path, path_2, command):
             if terminate:
                 src.parent.children.pop(src.path.split('/')[-1])
             return 0
+
     else:
         return 7
     
@@ -396,8 +408,10 @@ def check_double_path(remain):
 def check_path(path):
     valid_syntax = [" ", ".", "..", "-", "_", "\"", "/"]
     path_check = path
+
     for syntax in valid_syntax:
         path_check = path_check.replace(syntax, "a")
+
     if not path_check.isalnum():
         return False
     elif ("\"" in path or " " in path) and not (path.count("\"") == 2 and path[-1] == "\"" and path[0] =="\"" and " " in path):
@@ -444,7 +458,8 @@ def check_and_split_syntax(cmd):
 
     if command in ('exit', 'pwd') and remain != '':
         valid = False
-    elif command in ('touch', 'cd', 'rm', 'rmdir', 'mkdir', 'ls'):
+
+    elif command in ('touch', 'cd', 'xoadikiucdoita', 'rmdir', 'mkdir', 'ls'):
         if command == "ls": 
             valid_arg, remain = check_arg(remain, ["-a", "-d", "-l"], arg_list)
         elif command in 'mkdir': 
@@ -455,15 +470,18 @@ def check_and_split_syntax(cmd):
             if valid_path:
                 path = remain.strip("\"").split("/")
                 path_list = [path] 
+
     elif command in ('adduser', 'deluser', 'su'):
         if not (command == "su" and remain == ''):
             valid_user = check_user(remain)
             user = remain.strip("\"")
+
     elif command in ('cp', 'mv'):
         valid_path, path_1, path_2 = check_double_path(remain)
         path_1 = path_1.strip("\"").split("/")
         path_2 = path_2.strip("\"").split("/")
         path_list = [path_1, path_2]
+
     elif command in ('chmod', 'chown'):
         valid_arg, remain = check_arg(remain, ["-r"], arg_list)
         if valid_arg:
@@ -486,18 +504,19 @@ def check_and_split_syntax(cmd):
 
             
 def main():
-    user_list = []
+    user_list = ['root']
     active_user = 'root'
+
     root = Node( None, {}, 'drwxr-x', 'root', '') 
     root.parent = root
     root.children[''] = root
     current = root
-    user_list.append(active_user)
 
     while True:
         display = f"{current.path}$ "
         if current == root:
             display = f"/{current.path}$ "
+        
         cmd = input(active_user + ":" + display).strip()
         if cmd == '':
             continue
@@ -530,7 +549,7 @@ def main():
                 print(current.path)
         elif command == 'rmdir':
             Error_handling(rmdir(current, active_user, path), command)
-        elif command == 'rm':
+        elif command == 'xoadikiucdoita':
             Error_handling(rm_path(current, active_user, path), command)
         elif command == 'adduser':
             if active_user == 'root':
@@ -586,3 +605,4 @@ Stopping now without having performed any action''')
 if __name__ == '__main__':
     main()
 #permission use bitwise
+#recursive error handling
