@@ -214,8 +214,9 @@ def bfs(visit_list):
         destination = visit_list[0]
         visit_list.pop(0)
         for child in destination.children:
-            child_list.append(destination.children[child])
-            visit_list.append(destination.children[child])
+            if destination.children[child].path != '':
+                child_list.append(destination.children[child])
+                visit_list.append(destination.children[child])
 
 
 def chown(current, user, path, arg):
@@ -240,19 +241,18 @@ def make(current, user, path, command, arg=[]):
     destination = current.cd(path)
     if destination["Error_mes"] == 'Success':
         destination = destination["Stop_at"]
+        #create tmp child to check permission
+        tmp_child = Node(destination, {}, '-'*7, '', '')
+        if not check_permission(tmp_child, user, ancestor_x=True, parent_w=True):
+            return 1
         if name in destination.children and command != 'touch':
             return 6
         else:
-            #create tmp child to check permission
-            tmp_child = Node(destination, {}, '-'*7, '', '')
-            if not check_permission(tmp_child, user, ancestor_x=True, parent_w=True):
-                return 1
-            else:
-                flag = 'f'
-                if command == "mkdir":
-                    flag = 'd'
-                destination.create(user,name, flag)
-                return 0 
+            flag = 'f'
+            if command == "mkdir":
+                flag = 'd'
+            destination.create(user,name, flag)
+            return 0 
 
     else:        
         if '-p' in arg:
@@ -414,7 +414,7 @@ def check_path(path):
 
     if not path_check.isalnum():
         return False
-    elif ("\"" in path or " " in path) and not (path.count("\"") == 2 and path[-1] == "\"" and path[0] =="\"" and " " in path):
+    elif ("\"" in path or " " in path) and not (path.count("\"") == 2 and path[-1] == "\"" and path[0] =="\""):
         return False
     else:
         return True
@@ -605,4 +605,3 @@ Stopping now without having performed any action''')
 if __name__ == '__main__':
     main()
 #permission use bitwise
-#recursive error handling
