@@ -69,6 +69,7 @@ class Node:
                 current = destination['Stop_at'].children[name]
                 return {"Stop_at": current, "Error_mes": "Success"}
         else:
+            destination["Error_mes"] = "No such file"
             return destination
     
     #create children of the node
@@ -154,82 +155,83 @@ def chmod(current, user, path, format_string, arg):
     target = current.cf(path)
 
     if target["Error_mes"] == "Success":
-
         target = target["Stop_at"]
-        u = ["-"] * 3
-        o = ["-"] * 3
-        perm = ["-"] * 3
-        format_string = format_string.replace('a', 'uo')
-        if 'o' in format_string:
-            o = perm
-        if 'u' in format_string:
-            u = perm
-        
-        if 'r' in format_string:
-            perm[0] = 'r'
-        if 'w' in format_string:
-            perm[1] = 'w'
-        if 'x' in format_string:
-            perm[2] = 'x'
-        
-        full_perm = u + o
-
-        child_list = []
-        if "-r" in arg:
-            child_list = bfs([target])
-        child_list.append(target)
-
-        for child in child_list:
-            if not check_permission(child, user, ancestor_x=True):
+        if not check_permission(target, user, ancestor_x=True):
                 Error_handling(1, 'chmod')
-            elif user not in ('root', child.owner):
-                Error_handling(3, 'chmod')
-            else:
-                permission = list(child.all_permission)
-                if '=' in format_string:
-                    if 'u' in format_string:
-                        permission[:3] = u
-                    if 'o' in format_string:
-                        permission[3:] = o
-                elif '+' in format_string:
-                    for index in range(6):
-                        if full_perm[index] != "-":
-                            permission[index] = full_perm[index]
-                elif '-' in format_string:
-                    for index in range(6):
-                        if full_perm[index] != "-":
-                            permission[index] = '-'
-                child.all_permission = ''.join(permission)
+        else:
+            u = ["-"] * 3
+            o = ["-"] * 3
+            perm = ["-"] * 3
+            format_string = format_string.replace('a', 'uo')
+            if 'o' in format_string:
+                o = perm
+            if 'u' in format_string:
+                u = perm
+            
+            if 'r' in format_string:
+                perm[0] = 'r'
+            if 'w' in format_string:
+                perm[1] = 'w'
+            if 'x' in format_string:
+                perm[2] = 'x'
+            
+            full_perm = u + o
+
+            child_list = [target]
+            if "-r" in arg:
+                child_list = bfs([target], user)
+
+            for child in child_list:
+                if user not in ('root', child.owner):
+                    Error_handling(3, 'chmod')
+                else:
+                    permission = list(child.all_permission)
+                    if '=' in format_string:
+                        if 'u' in format_string:
+                            permission[:3] = u
+                        if 'o' in format_string:
+                            permission[3:] = o
+                    elif '+' in format_string:
+                        for index in range(6):
+                            if full_perm[index] != "-":
+                                permission[index] = full_perm[index]
+                    elif '-' in format_string:
+                        for index in range(6):
+                            if full_perm[index] != "-":
+                                permission[index] = '-'
+                    child.all_permission = ''.join(permission)
                 
         return 0
     else:
         return 2
 
 
-def bfs(visit_list):
-    child_list = []
+def bfs(visit_list, user):
+    child_list = [visit_list[0]]
     while True:
         if len(visit_list) == 0:
             return child_list
         destination = visit_list[0]
         visit_list.pop(0)
         for child in destination.children:
-            if destination.children[child].path != '':
-                child_list.append(destination.children[child])
-                visit_list.append(destination.children[child])
+            tovisit = destination.children[child]
+            if tovisit.path != '' and check_permission(tovisit, user, ancestor_x=True):
+                child_list.append(tovisit)
+                visit_list.append(tovisit)
+            elif not check_permission(tovisit, user, ancestor_x=True):
+                Error_handling(1, 'chmod')
 
 
 def chown(current, user, path, arg):
     target = current.cf(path)
     if target['Error_mes'] == "Success":
         target = target["Stop_at"]
-        target.owner = user
-        if target.path == '':
-            target.children.pop('')
+        child_list = [target]
         if '-r' in arg:
-            child_list = bfs([target])
-            for child in child_list:
-                child.owner = user
+            child_list = bfs([target], 'root')
+
+        for child in child_list:
+            child.owner = user
         return 0
     else:
         return 2
@@ -245,7 +247,7 @@ def make(current, user, path, command, arg=[]):
         tmp_child = Node(destination, {}, '-'*7, '', '')
         if not check_permission(tmp_child, user, ancestor_x=True, parent_w=True):
             return 1
-        if name in destination.children and command != 'touch':
+        elif name in destination.children and command != 'touch':
             return 6
         else:
             flag = 'f'
@@ -349,8 +351,7 @@ def mv_cp(current, user, path, path_2, command):
         elif src.type == 'd':
             return 12
         else:
-            child = Node(dst, {}, src.type + src.all_permission, src.owner, src.path + '/' + name)
-            dst.children[name] = child
+            dst.create(src.owner, name, 'f')
             if terminate:
                 src.parent.children.pop(src.path.split('/')[-1])
             return 0
@@ -565,6 +566,7 @@ def main():
             else:
                 if user in user_list:
                     active_user = user
+                    current = root
                 else:
                     Error_handling(15, command)
         elif command == "deluser":
@@ -583,19 +585,19 @@ Stopping now without having performed any action''')
                 Error_handling(3, command)
         elif command in ('mv', 'cp'):
             path_2 = path_list[1]
-            mv_cp(current, active_user, path, path_2, command)
+            Error_handling(mv_cp(current, active_user, path, path_2, command), command)
         elif command == 'chmod':
             if not valid_format:
                 Error_handling(17, command)
             else:
-                chmod(current, active_user, path, format_string, arg_list)
+                Error_handling(chmod(current, active_user, path, format_string, arg_list), command)
         elif command == 'chown':
             if active_user != 'root':
                 Error_handling(3, command)
             elif user not in user_list:
                 Error_handling(15 ,command)
             else:
-                chown(current, user, path, arg_list)
+                Error_handling(chown(current, user, path, arg_list), command)
         elif command == '':
             pass
         else:
@@ -605,3 +607,9 @@ Stopping now without having performed any action''')
 if __name__ == '__main__':
     main()
 #permission use bitwise
+#error handling lai
+#Stress test
+# With -p and path does not have right permission to create
+# permission denied will be silent
+#  but does the dir still can be created without suitable permission 
+# NO
