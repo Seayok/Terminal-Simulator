@@ -87,7 +87,7 @@ def Error_handling(num, command):
     Error_list = { 1: "Permission denied", 2: "No such file or directory", 3: "Operation not permitted", 4: "Ancestor directory does not exist", 5: 'Is a directory',\
                 6: "File exists", 7: "No such file", 8: "Not a directory", 9: "Directory not empty", 10: "Cannot remove pwd", 11: "Destination is a directory",\
                 12: "Source is a directory", 13: "Invalid syntax", 14: "The user already exist", 15: "Invalid user", 16: "The user does not exist",\
-                17: "Invalid mode", 18: "Command not found", 19: "No such file or directory"}
+                17: "Invalid mode", 18: "Command not found"}
     if num != 0:
         print(f'{command}: {Error_list[num]}')
 
@@ -310,8 +310,10 @@ def rmdir(current, user, path):
             target.parent.children.pop(name)
             return 0
 
+    elif target["Error_mes"] == "Destination is a file":
+        return 8
     else:
-        return 19
+        return 2
 
 
 def mv_cp(current, user, path, path_2, command):
@@ -357,8 +359,8 @@ def mv_cp(current, user, path, path_2, command):
             return 0
 
     else:
-        return 19
-    
+        return 2
+
 
 def check_format_string(remain):
     if len(remain) < 1:
