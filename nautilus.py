@@ -85,9 +85,9 @@ class Node:
 
 def Error_handling(num, command):
     Error_list = { 1: "Permission denied", 2: "No such file or directory", 3: "Operation not permitted", 4: "Ancestor directory does not exist", 5: 'Is a directory',\
-                6: "File exists", 7: "No such file", 8: "Not a directory", 9: "Directory not empty", 10: "Cannot remove pwd", 11: "Destination is a direcotry",\
+                6: "File exists", 7: "No such file", 8: "Not a directory", 9: "Directory not empty", 10: "Cannot remove pwd", 11: "Destination is a directory",\
                 12: "Source is a directory", 13: "Invalid syntax", 14: "The user already exist", 15: "Invalid user", 16: "The user does not exist",\
-                17: "Invalid mode", 18: "Command not found"}
+                17: "Invalid mode", 18: "Command not found", 19: "No such file or directory"}
     if num != 0:
         print(f'{command}: {Error_list[num]}')
 
@@ -247,7 +247,7 @@ def make(current, user, path, command, arg=[]):
         tmp_child = Node(destination, {}, '-'*7, '', '')
         if not check_permission(tmp_child, user, ancestor_x=True, parent_w=True):
             return 1
-        elif name in destination.children and command != 'touch':
+        elif name in destination.children and command != 'touch' and "-p" not in arg:
             return 6
         else:
             flag = 'f'
@@ -311,7 +311,7 @@ def rmdir(current, user, path):
             return 0
 
     else:
-        return 7
+        return 19
 
 
 def mv_cp(current, user, path, path_2, command):
@@ -613,3 +613,4 @@ if __name__ == '__main__':
 # permission denied will be silent
 #  but does the dir still can be created without suitable permission 
 # NO
+#dictionary sorting 
