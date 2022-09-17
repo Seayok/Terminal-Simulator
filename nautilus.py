@@ -300,8 +300,6 @@ def rmdir(current, user, path):
 
         if not check_permission(target, user, ancestor_x=True, parent_w=True):
             return 1
-        elif target.type == '-':
-            return 8
         elif len(target.children) > 1 or (target.path != '' and len(target.children) > 0):
             return 9
         elif target == current:
