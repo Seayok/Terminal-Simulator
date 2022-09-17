@@ -357,7 +357,7 @@ def mv_cp(current, user, path, path_2, command):
             return 0
 
     else:
-        return 7
+        return 19
     
 
 def check_format_string(remain):
