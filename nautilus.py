@@ -168,7 +168,7 @@ def check_and_split_syntax(cmd):
                 format_string = remain.split(' ', 1)[0]
                 valid_format = check_format_string(format_string)
                 path_1 = remain[len(format_string):]
-                if path_1 != '':
+                while len(path_1) > 0 and path_1[0] == ' ':
                     path_1 = path_1[1:]
                 valid_path = check_path(path_1)
             else:
@@ -711,8 +711,6 @@ if __name__ == '__main__':
 #test syntax
 #error handling lai
 #Stress test
-# With -p and path does not have right permission to create
 #dictionary sorting error
-
-#double slash
+#white space between arg
 #simplify whenever can
