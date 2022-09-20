@@ -1,3 +1,6 @@
+# Some of the commands will share the same function
+# Due to their similarity in error handling and functionality
+
 # Node is an object represent both files and folders
 class Node:
     def __init__(self, parent, children, permission, owner, path, ancestor):
@@ -28,17 +31,21 @@ class Node:
             if ancestor.permission(user)[2] == '-': 
                 return False
             
-            if ancestor.path == '':
+            if ancestor.path == '/':
                 not_root = False
 
             ancestor = ancestor.parent # Go upper the tree
         return True
 
     # Go to folder with a given path
+    # This function will also adjust the path array 
+    # So that the first element of it is the Node that error occur
     def go_to_folder(self, path):
         
         if len(path) > 0 and path[0] == '': # If the given path is a fullpath
             current = self.ancestor
+            while '' in path:
+                path.remove('')
         else: # If the given path is a relative path
             current = self
 
@@ -46,17 +53,9 @@ class Node:
 
             if len(path) == 0: # Arrive at the folder
                 return {"Stop_at": current, "Error_mes": 'Success'}
-
-            name = path[0]
-
-            if name == ".":
-                path.pop(0)
-                continue
-            elif name == "..":
-                current = current.parent
-                path.pop(0)
-                continue
-            elif name in current.children: # If the next folder down from the path exist
+            
+            name = path[0]  
+            if name in current.children: # If the next folder down from the path exist
 
                 child = current.children[name]
 
@@ -73,8 +72,10 @@ class Node:
     def go_to_Node(self, path):
 
         name = path[-1] # Name of the file
-        path.pop(-1)
+        if name == '':
+            name = "/"
 
+        path.pop(-1)
         destination = self.go_to_folder(path)
 
         if destination["Error_mes"] == "Success" and name in destination['Stop_at'].children:
@@ -91,307 +92,98 @@ class Node:
             permission = 'drwxr-x' 
         else: # Create a file
             permission = '-rw-r--'
+        
+        # Get full path from parent path
+        if self.path == "/":
+            path = self.path + name 
+        else:
+            path = self.path + '/' + name
 
-        path = self.path + '/' + name
         new_node = Node (self, {}, permission, owner, path, self.ancestor)
-
+        new_node.children["."] = new_node
+        new_node.children[".."] = new_node.parent
         self.children[name] = new_node
 
 
 # Each of the command or function will return the number correspond to the list below.
 def Error_handling(num, command):
 
-    Error_list = { 1: "Permission denied", 2: "No such file or directory", 3: "Operation not permitted", 4: "Ancestor directory does not exist", 
-                5: 'Is a directory', 6: "File exists", 7: "No such file", 8: "Not a directory", 9: "Directory not empty", 10: "Cannot remove pwd",
-                11: "Destination is a directory", 12: "Source is a directory", 13: "Invalid syntax", 14: "The user already exist", 15: "Invalid user", 
-                16: "The user does not exist", 17: "Invalid mode", 18: "Command not found"}
+    Error_list = { 1: "Permission denied", 2: "No such file or directory", 3: "Operation not permitted",
+                4: "Ancestor directory does not exist", 5: 'Is a directory', 6: "File exists", 
+                7: "No such file", 8: "Not a directory", 9: "Directory not empty", 10: "Cannot remove pwd",
+                11: "Destination is a directory", 12: "Source is a directory", 13: "Invalid syntax", 
+                14: "The user already exists", 15: "Invalid user", 16: "The user does not exist", 
+                17: "Invalid mode", 18: "Command not found"}
 
     if num != 0: # num = 0: success
         print(f'{command}: {Error_list[num]}')
 
 
-# Function to check permission that is needed for each of the command
-# If the command need certain permission(e.g ancestor execute) then when call the function set the ancestor_x to True
-def check_permission(current, user, ancestor_x = False, parent_w = False,\
-                    dir_x = False, file_r = False, file_w = False, parent_r=False):
+def check_and_split_syntax(cmd):
+    command = cmd.split(' ', 1)[0]
+    remain = cmd[len(command):]
+    if remain != '':
+        remain = remain[1:]
+    #initialize
+    arg_list = []
+    valid_arg = True
+    valid_path = True
+    valid_format = True
+    valid = True
+    valid_user = True
+    path_list = []
+    format_string = ''
+    user = ''
+    path_1 = ''
 
-    a_x = ancestor_x and not current.check_ancestor(user)
-    p_w = parent_w and current.parent.permission(user)[1] == '-'
-    d_x = dir_x and current.permission(user)[2] == '-'
-    f_r = file_r and current.permission(user)[0] == '-'
-    f_w = file_w and current.permission(user)[1] == '-'
-    p_r = parent_r and current.parent.permission(user)[0] == '-'
 
-    return not(a_x or p_w or d_x or f_r or f_w or p_r) #Return False when not having permission
+    if command in ('exit', 'pwd') and remain != '':
+        valid = False
 
-
-def ls(current, user, path, arg):  
-
-    if len(path) == 0 : # The ls command recieve no argument for path
-        target = current
-    else:
-        target = current.go_to_Node(path)
-
-        if target["Error_mes"] == "Success":
-            target = target["Stop_at"]
-        else: # If path does not exist
-            return 2
-
-    parent = target.parent
-    name_list = [] # List to store Nodes that will be display
-
-    # Flag d
-    if target.type == '-' or '-d' in arg: # If destination is file or arg have -d
-        if not check_permission(target, user, ancestor_x=True, parent_r=True):
-            return 1
+    elif command in ('touch', 'cd', 'rm', 'rmdir', 'mkdir', 'ls'):
+        if command == "ls": 
+            valid_arg, path_1 = check_arg(remain, ["-a", "-d", "-l"], arg_list)
+        elif command in 'mkdir': 
+            valid_arg, path_1 = check_arg(remain, ["-p"], arg_list)
         else:
-            name_list.append(target.path.split("/")[-1]) # Only add the file or folder to the list
-    else:
-        if not check_permission(target, user, ancestor_x=True, file_r=True):
-            return 1
-        else:  
-            parent = target # The folder become the parent because we want to list the content inside
-            name_list = sorted(target.children.keys()) # Get all the contents inside and sort
+            path_1 = remain
+        #su va ls co the khong nhan argument
+        if valid_arg == True and not (command == 'ls' and path_1 == ''):
+            valid_path = check_path(path_1)
 
-            if target.path == "": # root is the only folder that contain itself as a child
-                name_list.pop(0)
+    elif command in ('adduser', 'deluser', 'su'):
+        if not (command == "su" and remain == ''):
+            valid_user = check_user(remain)
+            user = remain.strip("\"")
 
+    elif command in ('cp', 'mv'):
+        valid_path, path_1, path_2 = check_double_path(remain)
+        path_2 = path_2.strip("\"").split("/")
+        path_list.append(path_2)
 
-    # Flag a
-    if "-a" not in arg:
-        for item in name_list:
-            if len(item) > 0 and item[0] == '.': # File and folder start with "."
-                name_list.remove(item)
-                
-    
-    res = ''
-    # Flag l and result
-    for item in name_list:
-
-        child = parent.children[item] # Get the Node of the child
-
-        if item == "": # If root dir in name_list
-            item = '/'
-        
-        if len(path) == 0 and child == current: # If ls -d refer to the pwd
-            item = "."
-
-        if "-l" in arg:
-            res += child.type + child.all_permission + ' ' + child.owner + ' ' + item + '\n'# Long listing format
-        else:
-            res += item + '\n' # Simple format
-
-    print(res, end='')
-    return 0
-
-
-def chmod(current, user, path, format_string, arg):
-    target = current.go_to_Node(path)
-
-    if target["Error_mes"] == "Success":
-        target = target["Stop_at"]
-        if not check_permission(target, user, ancestor_x=True):
-                Error_handling(1, 'chmod')
-        else:
-            u = ["-"] * 3
-            o = ["-"] * 3
-            perm = ["-"] * 3
-            format_string = format_string.replace('a', 'uo')
-            if 'o' in format_string:
-                o = perm
-            if 'u' in format_string:
-                u = perm
-            
-            if 'r' in format_string:
-                perm[0] = 'r'
-            if 'w' in format_string:
-                perm[1] = 'w'
-            if 'x' in format_string:
-                perm[2] = 'x'
-            
-            full_perm = u + o
-
-            child_list = [target]
-            if "-r" in arg:
-                child_list = bfs([target], user)
-
-            for child in child_list:
-                if user not in ('root', child.owner):
-                    Error_handling(3, 'chmod')
-                else:
-                    permission = list(child.all_permission)
-                    if '=' in format_string:
-                        if 'u' in format_string:
-                            permission[:3] = u
-                        if 'o' in format_string:
-                            permission[3:] = o
-                    elif '+' in format_string:
-                        for index in range(6):
-                            if full_perm[index] != "-":
-                                permission[index] = full_perm[index]
-                    elif '-' in format_string:
-                        for index in range(6):
-                            if full_perm[index] != "-":
-                                permission[index] = '-'
-                    child.all_permission = ''.join(permission)
-                
-        return 0
-    else:
-        return 2
-
-
-def bfs(visit_list, user):
-    child_list = [visit_list[0]]
-    while True:
-        if len(visit_list) == 0:
-            return child_list
-        destination = visit_list[0]
-        visit_list.pop(0)
-        for child in destination.children:
-            tovisit = destination.children[child]
-            if tovisit.path != '' and check_permission(tovisit, user, ancestor_x=True):
-                child_list.append(tovisit)
-                visit_list.append(tovisit)
-            elif not check_permission(tovisit, user, ancestor_x=True):
-                Error_handling(1, 'chmod')
-
-
-def chown(current, user, path, arg):
-    target = current.go_to_Node(path)
-    if target['Error_mes'] == "Success":
-        target = target["Stop_at"]
-        child_list = [target]
-        if '-r' in arg:
-            child_list = bfs([target], 'root')
-
-        for child in child_list:
-            child.owner = user
-        return 0
-    else:
-        return 2
-
-
-def make(current, user, path, command, arg=[]):
-    name = path[-1]
-    path.pop(-1)
-    destination = current.go_to_folder(path)
-    if destination["Error_mes"] == 'Success':
-        destination = destination["Stop_at"]
-        #create tmp child to check permission
-        tmp_child = Node(destination, {}, '-'*7, '', '', destination.ancestor)
-        if not check_permission(tmp_child, user, ancestor_x=True, parent_w=True):
-            return 1
-        elif name in destination.children and command != 'touch' and "-p" not in arg:
-            return 6
-        else:
-            flag = 'f'
-            if command == "mkdir":
-                flag = 'd'
-            destination.create(user,name, flag)
-            return 0 
-
-    else:        
-        if '-p' in arg:
-            if not check_permission(destination["Stop_at"], user, ancestor_x=True, parent_w=True):
-                return 1
-            destination = destination["Stop_at"]
-            path.append(name)
-            while len(path) > 0:
-                subname = path[0]
-                destination.create(user, subname, "d")
-                destination = destination.children[subname]
-                path.pop(0)
-            return 0
-        else:
-            return 4
-
-
-def rm_path(current, user, path):
-    name = path[-1]
-    target = current.go_to_Node(path)
-
-    if target["Error_mes"] == "Success":
-        target = target["Stop_at"]
-
-        if not check_permission(target, user, ancestor_x=True, file_w=True, parent_w=True):
-            return 1
-        elif target.type == 'd':
-            return 5
-        else:
-            target.parent.children.pop(name)
-            return 0
-
-    else:
-        return 7
-    
-#done error handling
-def rmdir(current, user, path):
-    name = path[-1]
-    target = current.go_to_folder(path)
-
-    if target["Error_mes"] == "Success":
-        target = target["Stop_at"]
-
-        if not check_permission(target, user, ancestor_x=True, parent_w=True):
-            return 1
-        elif len(target.children) > 1 or (target.path != '' and len(target.children) > 0):
-            return 9
-        elif target == current:
-            return 10
-        else:
-            target.parent.children.pop(name)
-            return 0
-
-    elif target["Error_mes"] == "Destination is a file":
-        return 8
-    else:
-        return 2
-
-
-def mv_cp(current, user, path, path_2, command):
-    terminate = False
-    file_name = path[-1]
-    path.pop(-1)
-    src = current.go_to_folder(path)
-    name = path_2[-1]
-    path_2.pop(-1)
-    dst = current.go_to_folder(path_2)
-
-    if src["Error_mes"] == "Success" and dst["Error_mes"] == "Success":
-        src = src['Stop_at']
-        dst = dst['Stop_at']
-
-        if file_name not in src.children:
-            return 7
-
-        src = src.children[file_name]
-        test_child = Node(dst, {}, "-"*7, '', '')
-
-        if command == "mv":
-            check = check_permission(src, user, ancestor_x=True, parent_w=True)
-            check_2 = check_permission(test_child, user, ancestor_x=True, parent_w=True)
-            terminate = True
-        else:
-            check = check_permission(src, user, ancestor_x=True, file_r=True)
-            check_2 = check_permission(test_child, user, ancestor_x=True, parent_w=True)
-
-        if not(check and check_2):
-            return 1
-        elif name in dst.children:
-            if dst.children[name].type == 'd':
-                return 11
+    elif command in ('chmod', 'chown'):
+        valid_arg, remain = check_arg(remain, ["-r"], arg_list)
+        if valid_arg:
+            if command == "chmod":
+                format_string = remain.split(' ', 1)[0]
+                valid_format = check_format_string(format_string)
+                path_1 = remain[len(format_string):]
+                if path_1 != '':
+                    path_1 = path_1[1:]
+                valid_path = check_path(path_1)
             else:
-                return 6
-        elif src.type == 'd':
-            return 12
-        else:
-            dst.create(src.owner, name, 'f')
-            if terminate:
-                src.parent.children.pop(src.path.split('/')[-1])
-            return 0
+                valid_path, user, path_1 = check_double_path(remain)
+                valid_user = check_user(user)
+                user = user.strip("\"")
 
+    if path_1 == '':
+        path_1 = []
     else:
-        return 2
+        path_1 = path_1.strip("\"").split("/")
+    
+    path_list.insert(0, path_1) 
+    valid = valid and valid_arg and valid_user and valid_path
+    return (valid, command, path_list, arg_list, user, format_string, valid_format)
 
 
 def check_format_string(remain):
@@ -451,8 +243,14 @@ def check_path(path):
         return False
     elif ("\"" in path or " " in path) and not (path.count("\"") == 2 and path[-1] == "\"" and path[0] =="\""):
         return False
+    elif "\"" in path and len(path) == 2: # ""
+        return False
     else:
-        return True
+        path = path.strip("\"").split("/")
+        if '' in path and ( path.count('') > 1 or path[0] != '' ) and path != ['','']: #path not /
+            return False
+        else:
+            return True
 
 
 def check_arg(remain, arguments, arg_list):
@@ -474,92 +272,338 @@ def check_user(remain):
     return check_path(remain) and "/" not in remain
 
 
-def check_and_split_syntax(cmd):
-    command = cmd.split(' ', 1)[0]
-    remain = cmd.replace(command, '')
-    if remain != '':
-        remain = remain[1:]
-    #initialize
-    arg_list = []
-    valid_arg = True
-    valid_path = True
-    valid_format = True
-    valid = True
-    valid_user = True
-    path_list = [[]]
-    format_string = ''
-    user = ''
+# Function to check permission that is needed for each of the command
+# If the command need certain permission(e.g ancestor execute) then when call the function set the ancestor_x to True
+def check_permission(current, user, ancestor_x = False, parent_w = False,\
+                    dir_x = False, file_r = False, file_w = False, parent_r=False):
+
+    a_x = ancestor_x and not current.check_ancestor(user)
+    p_w = parent_w and current.parent.permission(user)[1] == '-'
+    d_x = dir_x and current.permission(user)[2] == '-'
+    f_r = file_r and current.permission(user)[0] == '-'
+    f_w = file_w and current.permission(user)[1] == '-'
+    p_r = parent_r and current.parent.permission(user)[0] == '-'
+
+    return not(a_x or p_w or d_x or f_r or f_w or p_r) #Return False when not having permission
 
 
-    if command in ('exit', 'pwd') and remain != '':
-        valid = False
+# Touch and mkdir share the same function
+def make(current, user, path, command, arg=[]):
 
-    elif command in ('touch', 'cd', 'rm', 'rmdir', 'mkdir', 'ls'):
-        if command == "ls": 
-            valid_arg, remain = check_arg(remain, ["-a", "-d", "-l"], arg_list)
-        elif command in 'mkdir': 
-            valid_arg, remain = check_arg(remain, ["-p"], arg_list)
-        #su va ls co the khong nhan argument
-        if valid_arg == True and not (command == 'ls' and remain == ''):
-            valid_path = check_path(remain)
-            if valid_path:
-                path = remain.strip("\"").split("/")
-                path_list = [path] 
+    name = path[-1] # Get the name of the Node we want to make
+    path.pop(-1) # Get the path to its parent
+    destination = current.go_to_folder(path)
 
-    elif command in ('adduser', 'deluser', 'su'):
-        if not (command == "su" and remain == ''):
-            valid_user = check_user(remain)
-            user = remain.strip("\"")
+    # Create tmp child to check permission
+    tmp_child = Node(destination["Stop_at"], {}, '-'*7, '', '', destination["Stop_at"].ancestor)  
 
-    elif command in ('cp', 'mv'):
-        valid_path, path_1, path_2 = check_double_path(remain)
-        path_1 = path_1.strip("\"").split("/")
-        path_2 = path_2.strip("\"").split("/")
-        path_list = [path_1, path_2]
+    if destination["Error_mes"] == 'Success':
+        destination = destination["Stop_at"] # This is the Node parent
 
-    elif command in ('chmod', 'chown'):
-        valid_arg, remain = check_arg(remain, ["-r"], arg_list)
-        if valid_arg:
-            if command == "chmod":
-                format_string = remain.split(' ', 1)[0]
-                valid_format = check_format_string(format_string)
-                path = remain.replace(format_string, '')
-                if path != '':
-                    path = path[1:]
-                valid_path = check_path(path)
-            else:
-                valid_path, path_1, path = check_double_path(remain)
-                if "/" not in path_1:
-                    user = path_1.strip("\"")
-            path = path.strip("\"").split("/")
-            path_list = [path]
+        if name in destination.children: # If Node exists
+            if command == "mkdir":
+                res = 6
+            else: # Touch do nothing
+                res = 0
+        elif not check_permission(tmp_child, user, ancestor_x=True, parent_w=True):
+            res = 1
+        else:
+            flag = 'f'
 
-    valid = valid and valid_arg and valid_user and valid_path
-    return (valid, command, path_list, arg_list, user, format_string, valid_format)
+            if command == "mkdir":
+                flag = 'd'
+            destination.create(user,name, flag)
+            res = 0 
+        
+        if "-p" in arg: # Ignore all error messages with -p
+            res = 0
+        return res
 
+    # If the ancestor dont exist and -p in arg
+    elif destination["Error_mes"] == "No such file or directory" and "-p" in arg:
+
+        destination = destination["Stop_at"] 
+
+        # If user have permission then create the Node if not only create ancestors
+        if not check_permission(tmp_child, user, ancestor_x=True, parent_w=True):
+            return 0
+
+        path.append(name)
+        while len(path) > 0:
+            subname = path[0]
+            destination.create(user, subname, "d")
+            destination = destination.children[subname] # Go to the next Node to create
+            path.pop(0)
+        return 0
+    # If ancestor is a file and -p in arg
+    elif "-p" in arg and destination["Error_mes"] == "Destination is a file":
+        return 0
+    else:
+        return 4
+
+
+# Mv and cp shares the same function
+def mv_cp(current, user, path, path_2, command):
+    terminate = False # Sign for the source to be deleted(mv command)
+
+    src = current.go_to_Node(path) # Seek for the Node
+
+    dst_name = path_2[-1]
+    path_2.pop(-1)
+    dst = current.go_to_folder(path_2)
+
+    if src["Error_mes"] == "Success" and dst["Error_mes"] == "Success":
+        src = src['Stop_at']
+        dst = dst['Stop_at']
+
+
+        if dst_name in dst.children and dst.children[dst_name].type == '-':
+            return 6
+        elif dst_name in dst.children and dst.children[dst_name].type == 'd':
+            return 11 
+        elif src.type == 'd':
+            return 12
+
+
+        test_child = Node(dst, {}, "-"*7, '', '', dst.ancestor)
+        if command == "mv":
+            check = check_permission(src, user, ancestor_x=True, parent_w=True)
+            check_2 = check_permission(test_child, user, ancestor_x=True, parent_w=True)
+            terminate = True
+        else:
+            check = check_permission(src, user, ancestor_x=True, file_r=True)
+            check_2 = check_permission(test_child, user, ancestor_x=True, parent_w=True)
+
+        if not(check and check_2):
+            return 1
+        else:
+            dst.create(user, dst_name, 'f')
+            if terminate:
+                src.parent.children.pop(src.path.split('/')[-1])
+            return 0
+    elif src["Error_mes"] != "Success":
+        return 7
+    else:
+        return 2
+
+
+def rm_path(current, user, path):
+    name = path[-1] # Get the Node name
+    target = current.go_to_Node(path)
+
+    if target["Error_mes"] == "Success":
+        target = target["Stop_at"]
+
+        if not check_permission(target, user, ancestor_x=True, file_w=True, parent_w=True):
+            return 1
+        elif target.type == 'd':
+            return 5
+        else:
+            target.parent.children.pop(name)
+            return 0
+
+    else:
+        return 7
+
+
+#done error handling
+def rmdir(current, user, path):
+    name = path[-1]
+    target = current.go_to_folder(path)
+
+    if target["Error_mes"] == "Success":
+        target = target["Stop_at"]
+
+        if not check_permission(target, user, ancestor_x=True, parent_w=True):
+            return 1
+        elif len(target.children) > 3 or (target.path != '/' and len(target.children) > 2):
+            return 9
+        elif target == current:
+            return 10
+        else:
+            target.parent.children.pop(name)
+            return 0
+
+    elif target["Error_mes"] == "Destination is a file":
+        return 8
+    else:
+        return 2
+
+
+# Get all the children recursively
+def bfs(visit_list, user):
+    child_list = [visit_list[0]]
+    while True:
+        if len(visit_list) == 0:
+            return child_list
+        destination = visit_list[0]
+        visit_list.pop(0)
+        for child in destination.children:
+            tovisit = destination.children[child]
+            if tovisit.path != '' and child != "." and child != ".." and check_permission(tovisit, user, ancestor_x=True):
+                child_list.append(tovisit)
+                visit_list.append(tovisit)
+            elif not check_permission(tovisit, user, ancestor_x=True):
+                Error_handling(1, 'chmod')
+
+
+def chmod(current, user, path, format_string, arg):
+    target = current.go_to_Node(path)
+
+    if target["Error_mes"] == "Success":
+        target = target["Stop_at"]
+        if not check_permission(target, user, ancestor_x=True):
+                Error_handling(1, 'chmod')
+        else:
+            u = ["-"] * 3
+            o = ["-"] * 3
+            perm = ["-"] * 3
+            format_string = format_string.replace('a', 'uo')
+            if 'o' in format_string:
+                o = perm
+            if 'u' in format_string:
+                u = perm
             
+            if 'r' in format_string:
+                perm[0] = 'r'
+            if 'w' in format_string:
+                perm[1] = 'w'
+            if 'x' in format_string:
+                perm[2] = 'x'
+            
+            full_perm = u + o
+
+            child_list = [target]
+            if "-r" in arg:
+                child_list = bfs([target], user)
+
+            for child in child_list:
+                if user not in ('root', child.owner):
+                    Error_handling(3, 'chmod')
+                else:
+                    permission = list(child.all_permission)
+                    if '=' in format_string:
+                        if 'u' in format_string:
+                            permission[:3] = u
+                        if 'o' in format_string:
+                            permission[3:] = o
+                    elif '+' in format_string:
+                        for index in range(6):
+                            if full_perm[index] != "-":
+                                permission[index] = full_perm[index]
+                    elif '-' in format_string:
+                        for index in range(6):
+                            if full_perm[index] != "-":
+                                permission[index] = '-'
+                    child.all_permission = ''.join(permission)
+                
+        return 0
+    else:
+        return 2
+
+
+def chown(current, user, path, arg):
+    target = current.go_to_Node(path)
+    if target['Error_mes'] == "Success":
+        target = target["Stop_at"]
+        child_list = [target]
+        if '-r' in arg:
+            child_list = bfs([target], 'root')
+
+        for child in child_list:
+            child.owner = user
+        return 0
+    else:
+        return 2
+
+
+def ls(current, user, path, arg):  
+
+    pwd = False
+    if len(path) == 0 : # The ls command receive no argument for path
+        target = current
+        pwd = True
+    else:
+        target = current.go_to_Node(path)
+
+        if target["Error_mes"] == "Success":
+            target = target["Stop_at"]
+        else: # If path does not exist
+            return 2
+
+    name_list = [] # List to store Nodes that will be display
+
+    # Flag d
+    if target.type == '-' or '-d' in arg: # If destination is file or arg have -d
+        if not check_permission(target, user, ancestor_x=True, parent_r=True):
+            return 1
+        else:
+            parent = target.parent
+            name = target.path.split("/")[-1]
+
+            if name == '': #if the folder is root
+                name = '/'
+            
+            if pwd: #If -d and no argument given for path
+                parent = target
+                name = "."
+
+            name_list.append(name) # Only add the file or folder to the list
+    else:
+        if not check_permission(target, user, ancestor_x=True, file_r=True):
+            return 1
+        else:  
+            parent = target # The folder become the parent because we want to list the content inside
+            name_list = sorted(parent.children.keys()) # Get all the contents inside and sort
+
+            if parent.path == "/": # root contain root as a child
+                name_list.remove("/")
+
+
+    # Flag a
+    if "-a" not in arg:
+        res_list = []
+        for item in name_list:
+            if item[0] != '.': # File and folder start with "."
+                res_list.append(item)
+        name_list = res_list
+                
+    res = ''
+    # Flag l and result
+    for item in name_list:
+
+        child = parent.children[item] # Get the Node of the child
+
+        if "-l" in arg:
+            res += child.type + child.all_permission + ' ' + child.owner + ' ' + item + '\n'# Long listing format
+        else:
+            res += item + '\n' # Simple format
+
+    print(res, end='')
+    return 0
+
+
 def main():
     user_list = ['root']
     active_user = 'root'
 
-    root = Node( None, {}, 'drwxr-x', 'root', '', None) 
+    root = Node( None, {}, 'drwxr-x', 'root', '/', None) 
     root.parent = root
+    root.children["/"] = root
     root.ancestor = root
-    root.children[''] = root
+    root.children["."] = root
+    root.children[".."] = root 
     current = root
 
     while True:
-        display = f"{current.path}$ "
-
-        if current == root:
-            display = f"/{current.path}$ "
         
-        cmd = input(active_user + ":" + display).strip()
+        cmd = input(f"{active_user}:{current.path}$ ").strip()
 
         if cmd == '':
             continue
 
         valid, command, path_list, arg_list, user, format_string, valid_format = check_and_split_syntax(cmd)
+
 
         if not valid:
             Error_handling(13, command)
@@ -567,34 +611,39 @@ def main():
         else:
             path = path_list[0]
 
+
         if command == "ls":
             Error_handling(ls(current, active_user, path, arg_list), command)
+
         elif command == "exit":
             print(f"bye, {active_user}")
             exit(0)
+
         elif command == "cd":
             result = current.go_to_folder(path) 
 
             if result["Error_mes"] == "Success":
                 folder = result["Stop_at"]
 
-                if not check_permission(folder, active_user, ancestor_x=True):
+                if not check_permission(folder, active_user, dir_x=True):
                     Error_handling(1, command)
                 else:
                     current = folder
             else:
                 print(f"cd: {result['Error_mes']}")  
+
         elif command in ("touch", "mkdir"):
-            Error_handling(make(current, active_user, path, command, arg_list), command)        
+            Error_handling(make(current, active_user, path, command, arg_list), command)
+
         elif command == "pwd":
-            if current == root:
-                print('/')
-            else:
-                print(current.path)
+            print(current.path)
+
         elif command == 'rmdir':
             Error_handling(rmdir(current, active_user, path), command)
+
         elif command == 'rm':
             Error_handling(rm_path(current, active_user, path), command)
+
         elif command == 'adduser':
             if active_user == 'root':
                 if user in user_list:
@@ -603,9 +652,11 @@ def main():
                     user_list.append(user)
             else:
                 Error_handling(3, command)
+
         elif command == 'su':
             if user == '':
                 active_user = 'root'
+                current = root
             else:
                 if user in user_list:
                     active_user = user
@@ -613,6 +664,7 @@ def main():
                 else:
                     Error_handling(15, command)
         elif command == "deluser":
+
             if active_user == 'root':
                 if user == 'root':
                     print('''WARNING: You are just about to delete the root account
@@ -626,14 +678,17 @@ Stopping now without having performed any action''')
                     user_list.remove(user)
             else:
                 Error_handling(3, command)
+
         elif command in ('mv', 'cp'):
             path_2 = path_list[1]
             Error_handling(mv_cp(current, active_user, path, path_2, command), command)
+
         elif command == 'chmod':
             if not valid_format:
                 Error_handling(17, command)
             else:
                 Error_handling(chmod(current, active_user, path, format_string, arg_list), command)
+
         elif command == 'chown':
             if active_user != 'root':
                 Error_handling(3, command)
@@ -641,8 +696,10 @@ Stopping now without having performed any action''')
                 Error_handling(15 ,command)
             else:
                 Error_handling(chown(current, user, path, arg_list), command)
+
         elif command == '':
             pass
+
         else:
             Error_handling(18, command)
 
@@ -650,14 +707,12 @@ Stopping now without having performed any action''')
 if __name__ == '__main__':
     main()
 
-
-#simplify check double path
+#viet test
+#test syntax
 #error handling lai
 #Stress test
 # With -p and path does not have right permission to create
-# permission denied will be silent
-#  but does the dir still can be created without suitable permission 
-# NO
-#dictionary sorting 
-#mkdir ..
-#ls -d -l / # ls -d -l
+#dictionary sorting error
+
+#double slash
+#simplify whenever can
