@@ -1,0 +1,11 @@
+ls -d 
+ls -d -a
+ls -d -a -l
+mkdir a
+mkdir mkdir
+
+ls ls
+ls ""
+mkdir ls
+touch ls/c
+ls ls

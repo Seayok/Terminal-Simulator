@@ -2,6 +2,7 @@
 # Due to their similarity in error handling and functionality
 
 # Node is an object represent both files and folders
+# The existence of a file only depend on if it is connected to / or not
 class Node:
     def __init__(self, parent, children, permission, owner, path, ancestor):
         self.parent = parent
@@ -38,8 +39,9 @@ class Node:
         return True
 
     # Go to folder with a given path
-    # This function will also adjust the path array 
-    # So that the first element of it is the Node that error occur
+    # This function will return the folder it stop and error mes.
+    # This function will also adjust the path array to the file that cause error
+    # Example cd a/b/c.txt/d c.txt is file then stop at will be b and path[0] is c.txt
     def go_to_folder(self, path):
         
         if len(path) > 0 and path[0] == '': # If the given path is a fullpath
@@ -308,6 +310,7 @@ def make(current, user, path, command, arg=[]):
         elif not check_permission(tmp_child, user, ancestor_x=True, parent_w=True):
             res = 1
         else:
+            del tmp_child
             flag = 'f'
 
             if command == "mkdir":
@@ -357,14 +360,14 @@ def mv_cp(current, user, path, path_2, command):
         dst = dst['Stop_at']
 
 
-        if dst_name in dst.children and dst.children[dst_name].type == '-':
+        if dst_name in dst.children and dst.children[dst_name].type == '-': # Des is an existed file
             return 6
-        elif dst_name in dst.children and dst.children[dst_name].type == 'd':
+        elif dst_name in dst.children and dst.children[dst_name].type == 'd': # Des is dir
             return 11 
-        elif src.type == 'd':
+        elif src.type == 'd': # Source is file
             return 12
 
-
+        # Create Fake child to test permission
         test_child = Node(dst, {}, "-"*7, '', '', dst.ancestor)
         if command == "mv":
             check = check_permission(src, user, ancestor_x=True, parent_w=True)
@@ -373,36 +376,38 @@ def mv_cp(current, user, path, path_2, command):
         else:
             check = check_permission(src, user, ancestor_x=True, file_r=True)
             check_2 = check_permission(test_child, user, ancestor_x=True, parent_w=True)
-
-        if not(check and check_2):
+        
+        del test_child
+        if not(check and check_2): # Permission denied
             return 1
         else:
             dst.create(user, dst_name, 'f')
             if terminate:
                 src.parent.children.pop(src.path.split('/')[-1])
             return 0
-    elif src["Error_mes"] != "Success":
+    elif src["Error_mes"] != "Success": # No such file 
         return 7
-    else:
+    else: # No such file or dir
         return 2
 
 
 def rm_path(current, user, path):
     name = path[-1] # Get the Node name
-    target = current.go_to_Node(path)
+    target = current.go_to_Node(path) 
 
     if target["Error_mes"] == "Success":
         target = target["Stop_at"]
 
-        if not check_permission(target, user, ancestor_x=True, file_w=True, parent_w=True):
-            return 1
-        elif target.type == 'd':
+        if target.type == 'd': # File is dir
             return 5
+        elif not check_permission(target, user, ancestor_x=True, file_w=True, parent_w=True):
+            return 1
         else:
             target.parent.children.pop(name)
+            del target
             return 0
 
-    else:
+    else: # File not found
         return 7
 
 
@@ -414,19 +419,20 @@ def rmdir(current, user, path):
     if target["Error_mes"] == "Success":
         target = target["Stop_at"]
 
-        if not check_permission(target, user, ancestor_x=True, parent_w=True):
-            return 1
-        elif len(target.children) > 3 or (target.path != '/' and len(target.children) > 2):
+        if len(target.children) > 3 or (target.path != '/' and len(target.children) > 2): # Not empty dir
             return 9
-        elif target == current:
+        elif target == current: #pwd
             return 10
+        elif not check_permission(target, user, ancestor_x=True, parent_w=True):
+            return 1
         else:
             target.parent.children.pop(name)
+            del target
             return 0
 
-    elif target["Error_mes"] == "Destination is a file":
+    elif target["Error_mes"] == "Destination is a file": # Not a directory
         return 8
-    else:
+    else: 
         return 2
 
 

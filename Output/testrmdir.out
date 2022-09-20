@@ -1,0 +1,10 @@
+root:/$ rmdir .
+rmdir: Cannot remove pwd
+root:/$ mkdir a
+root:/$ rmdir .
+rmdir: Directory not empty
+root:/$ cd a
+root:/a$ rmdir ..
+rmdir: Directory not empty
+root:/a$ exit
+bye, root

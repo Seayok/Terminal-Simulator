@@ -1,0 +1,94 @@
+root:/$ mkdir normal1
+root:/$ touch normal1/normal.txt
+root:/$ mkdir normal2
+root:/$ mv normal1/normal.txt normal2/normal_copy.txt
+root:/$ ls -l normal1
+root:/$ ls -l normal2
+-rw-r-- root normal_copy.txt
+root:/$ touch rename.txt
+root:/$ mv rename.txt newname.txt
+root:/$ ls -l
+-rw-r-- root newname.txt
+drwxr-x root normal1
+drwxr-x root normal2
+root:/$ 
+root:/$ adduser user
+root:/$ touch lack_parent_w.txt
+root:/$ chmod a=rwx lack_parent_w.txt
+root:/$ su user
+user:/$ mv lack_parent_w.txt lack_x.txt
+mv: Permission denied
+user:/$ su
+root:/$ chmod o=rwx /
+root:/$ su user
+user:/$ mv lack_parent_w.txt lack_x.txt
+user:/$ ls -l
+-rw-r-- user lack_x.txt
+-rw-r-- root newname.txt
+drwxr-x root normal1
+drwxr-x root normal2
+user:/$ su
+root:/$ mkdir -p an1/an2
+root:/$ mv lack_x.txt an1/an2/lack_x.txt
+root:/$ chmod a=rw an1
+root:/$ chmod a=rwx an1/an2
+root:/$ su user
+user:/$ mv an1/an2/lack_x.txt lack_x_mv.txt
+mv: Permission denied
+user:/$ su
+root:/$ chmod a=rwx an1
+root:/$ su user
+user:/$ mv an1/an2/lack_x.txt lack_dest_x.txt
+user:/$ ls -l
+drwxrwx root an1
+-rw-r-- user lack_dest_x.txt
+-rw-r-- root newname.txt
+drwxr-x root normal1
+drwxr-x root normal2
+user:/$ su
+root:/$ chmod a=rw an1
+root:/$ su user
+user:/$ mv lack_dest_x.txt an1/an2/lack.txt
+mv: Permission denied
+user:/$ su
+root:/$ chmod a=rwx /an1
+root:/$ su user
+user:/$ mv lack_dest_x.txt an1/an2/lack.txt
+user:/$ ls -l -a an1/an2
+drwxrwx root .
+drwxrwx root ..
+-rw-r-- user lack.txt
+user:/$ su
+root:/$ chmod o=rx /
+root:/$ su user
+user:/$ mv an1/an2/lack.txt lack_dest_w.txt
+mv: Permission denied
+user:/$ su
+root:/$ chmod o=rwx /
+root:/$ su user
+user:/$ mv an1/an2/lack.txt lack_dest_w.txt
+user:/$ ls -l
+drwxrwx root an1
+-rw-r-- user lack_dest_w.txt
+-rw-r-- root newname.txt
+drwxr-x root normal1
+drwxr-x root normal2
+user:/$ 
+user:/$ 
+user:/$ su
+root:/$ touch file_exist.txt
+root:/$ touch normal1/normal2.txt
+root:/$ mv file_exist.txt normal1/normal2.txt
+mv: File exists
+root:/$ mv normal/nothing.txt nothing_folder/nothing.txt
+mv: No such file
+root:/$ mv file_exist.txt normal1
+mv: Destination is a directory
+root:/$ mv normal1 file_exist.txt
+mv: File exists
+root:/$ mv normal1 newfile.txt
+mv: Source is a directory
+root:/$ mv normal1/normal2.txt nothing_folder/nothing.txt
+mv: No such file or directory
+root:/$ exit
+bye, root

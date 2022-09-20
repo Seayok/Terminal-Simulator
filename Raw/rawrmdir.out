@@ -1,0 +1,4 @@
+root:/$ rmdir: Cannot remove pwd
+root:/$ root:/$ rmdir: Directory not empty
+root:/$ root:/a$ rmdir: Directory not empty
+root:/a$ bye, root

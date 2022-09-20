@@ -1,0 +1,35 @@
+root:/$ touch .
+root:/$ touch ..
+root:/$ touch @a
+touch: Invalid syntax
+root:/$ touch -a
+root:/$ touch -p
+root:/$ touch -p -p
+touch: Invalid syntax
+root:/$ touch -d q
+touch: Invalid syntax
+root:/$ touch test.txt
+root:/$ touch test.txt
+root:/$ touch b/b.txt
+touch: Ancestor directory does not exist
+root:/$ mkdir b
+root:/$ touch b
+root:/$ ls -l
+-rw-r-- root -a
+-rw-r-- root -p
+drwxr-x root b
+-rw-r-- root test.txt
+root:/$ ls -l b
+root:/$ 
+root:/$ adduser user
+root:/$ mkdir -p "test permission/xbit"
+root:/$ chmod a=rw "test permission"
+root:/$ su user
+user:/$ touch "test permission/xbit/file"
+touch: Permission denied
+user:/$ touch a.txt
+touch: Permission denied
+user:/$ touch b/c/d/a.txt
+touch: Ancestor directory does not exist
+user:/$ exit
+bye, user

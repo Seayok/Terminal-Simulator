@@ -1,0 +1,31 @@
+root:/$ pwd
+/
+root:/$ adduser user
+root:/$ mkdir a
+root:/$ mkdir "another a"
+root:/$ mkdir -p "another a/b/c/d"
+root:/$ ls
+a
+another a
+root:/$ cd a
+root:/a$ cd "/another a/b/c/d"
+root:/another a/b/c/d$ pwd
+/another a/b/c/d
+root:/another a/b/c/d$ cd .
+root:/another a/b/c/d$ cd ..
+root:/another a/b/c$ cd .
+root:/another a/b/c$ cd ../../.././../../a/./..
+root:/$ touch b
+root:/$ chmod o=rw b
+root:/$ chmod a=rw a
+root:/$ su user
+user:/$ cd b
+cd: Destination is a file
+user:/$ cd a
+cd: Permission denied
+user:/$ cd c
+cd: No such file or directory
+user:/$ cd 
+cd: Invalid syntax
+user:/$ exit
+bye, user

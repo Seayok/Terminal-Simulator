@@ -1,0 +1,10 @@
+root:/$ pwd pwd
+pwd: Invalid syntax
+root:/$ pwd $
+pwd: Invalid syntax
+root:/$ pwd @
+pwd: Invalid syntax
+root:/$ exit exit
+exit: Invalid syntax
+root:/$ exit
+bye, root

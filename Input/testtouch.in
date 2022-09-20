@@ -1,0 +1,23 @@
+touch .
+touch ..
+touch @a
+touch -a
+touch -p
+touch -p -p
+touch -d q
+touch test.txt
+touch test.txt
+touch b/b.txt
+mkdir b
+touch b
+ls -l
+ls -l b
+
+adduser user
+mkdir -p "test permission/xbit"
+chmod a=rw "test permission"
+su user
+touch "test permission/xbit/file"
+touch a.txt
+touch b/c/d/a.txt
+exit

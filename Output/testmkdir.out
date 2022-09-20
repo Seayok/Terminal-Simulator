@@ -1,0 +1,103 @@
+root:/$ adduser user
+root:/$ mkdir a
+root:/$ ls
+a
+root:/$ mkdir /a/b
+root:/$ ls /a
+b
+root:/$ mkdir -p a/b/a/b/a/a/a
+root:/$ cd a/b/a/b/a/a/a
+root:/a/b/a/b/a/a/a$ pwd
+/a/b/a/b/a/a/a
+root:/a/b/a/b/a/a/a$ cd /
+root:/$ mkdir "      test"
+root:/$ ls
+      test
+a
+root:/$ mkdir -p ..
+root:/$ mkdir ..
+mkdir: File exists
+root:/$ mkdir .
+mkdir: File exists
+root:/$ mkdir ""
+mkdir: Invalid syntax
+root:/$ mkdir
+mkdir: Invalid syntax
+root:/$ mkdir !!!
+mkdir: Invalid syntax
+root:/$ mkdir -p test1/a/b/c/../e
+root:/$ cd test1
+root:/test1$ ls -l a/b
+drwxr-x root c
+root:/test1$ mkdir -p "a/-d"
+root:/test1$ mkdir -p a/.d
+root:/test1$ ls -l -a a
+drwxr-x root -d
+drwxr-x root .
+drwxr-x root ..
+drwxr-x root .d
+drwxr-x root b
+root:/test1$ mkdir a/b/../d
+root:/test1$ ls -l -a a
+drwxr-x root -d
+drwxr-x root .
+drwxr-x root ..
+drwxr-x root .d
+drwxr-x root b
+drwxr-x root d
+root:/test1$ mkdir a/b
+mkdir: File exists
+root:/test1$ touch c
+root:/test1$ mkdir c
+mkdir: File exists
+root:/test1$ mkdir -a
+root:/test1$ mkdir -p
+root:/test1$ mkdir -p -a/d
+root:/test1$ mkdir a/.
+mkdir: File exists
+root:/test1$ ls -l
+drwxr-x root -a
+drwxr-x root -p
+drwxr-x root a
+-rw-r-- root c
+root:/test1$ ls -l a
+drwxr-x root -d
+drwxr-x root b
+drwxr-x root d
+root:/test1$ cd /
+root:/$ mkdir test2
+root:/$ chmod o=r test2
+root:/$ su user
+user:/$ mkdir test2/b/c/d
+mkdir: Ancestor directory does not exist
+user:/$ mkdir /a/b/c
+mkdir: Permission denied
+user:/$ su
+root:/$ mkdir test3
+root:/$ ls -l
+drwxr-x root       test
+drwxr-x root a
+drwxr-x root test1
+drwxr-- root test2
+drwxr-x root test3
+root:/$ cd test3
+root:/test3$ mkdir -p silent/3_b
+root:/test3$ ls -l
+drwxr-x root silent
+root:/test3$ chmod a=rwx silent
+root:/test3$ su user
+user:/$ cd test3
+user:/test3$ mkdir -p silent/3_b/3_c/3_d
+user:/test3$ cd silent/3_b/3_c
+cd: No such file or directory
+user:/test3$ pwd
+/test3
+user:/test3$ mkdir -p silent/3_e/3_f
+user:/test3$ cd silent/3_e/3_f
+user:/test3/silent/3_e/3_f$ chmod a=rw ..
+user:/test3/silent/3_e/3_f$ mkdir "without x permission"
+mkdir: Permission denied
+user:/test3/silent/3_e/3_f$ pwd
+/test3/silent/3_e/3_f
+user:/test3/silent/3_e/3_f$ exit
+bye, user

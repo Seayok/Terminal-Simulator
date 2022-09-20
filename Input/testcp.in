@@ -1,0 +1,73 @@
+mkdir normal1
+touch normal1/normal.txt
+mkdir normal2
+cp normal1/normal.txt normal2/normal_copy.txt
+ls -l normal1
+ls -l normal2
+cp normal/nothing.txt nothing.txt
+
+adduser user
+touch lack_r.txt
+chmod o=wx lack_r.txt
+chmod a=rwx .
+su user
+cp lack_r.txt non_exsist/q.txt
+mkdir sampledir
+cp lack_r.txt sampledir/lack_r
+su
+chmod a=rwx lack_r.txt
+su user
+cp lack_r.txt sampledir/lack_r
+ls -l sampledir
+
+touch lack_parent_w.txt
+chmod a=rwx lack_parent_w.txt
+su user
+cp lack_parent_w.txt lack_x.txt
+su
+chmod o=rwx /
+su user
+cp lack_parent_w.txt lack_x.txt
+ls -l
+su
+mkdir -p an1/an2
+cp lack_x.txt an1/an2/lack_x.txt
+chmod a=rw an1
+chmod a=rwx an1/an2
+su user
+cp an1/an2/lack_x.txt lack_x_cp.txt
+su
+chmod a=rwx an1
+su user
+cp an1/an2/lack_x.txt lack_dest_x.txt
+ls -l
+su
+chmod a=rw an1
+su user
+cp lack_dest_x.txt an1/an2/lack.txt
+su
+chmod a=rwx /an1
+su user
+cp lack_dest_x.txt an1/an2/lack.txt
+ls -l -a an1/an2
+su
+chmod o=rx /
+su user
+cp an1/an2/lack.txt lack_dest_w.txt
+su
+chmod o=rwx /
+su user
+cp an1/an2/lack.txt lack_dest_w.txt
+ls -l
+
+
+su
+touch file_exist.txt
+touch normal1/normal2.txt
+cp file_exist.txt normal1/normal2.txt
+cp normal/nothing.txt nothing_folder/nothing.txt
+cp file_exist.txt normal1
+cp normal1 file_exist.txt
+cp normal1 newfile.txt
+cp normal1/normal2.txt nothing_folder/nothing.txt
+exit

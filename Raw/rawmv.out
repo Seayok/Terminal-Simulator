@@ -1,0 +1,32 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ -rw-r-- root normal_copy.txt
+root:/$ root:/$ root:/$ -rw-r-- root newname.txt
+drwxr-x root normal1
+drwxr-x root normal2
+root:/$ root:/$ root:/$ root:/$ root:/$ user:/$ mv: Permission denied
+user:/$ root:/$ root:/$ user:/$ user:/$ -rw-r-- user lack_x.txt
+-rw-r-- root newname.txt
+drwxr-x root normal1
+drwxr-x root normal2
+user:/$ root:/$ root:/$ root:/$ root:/$ root:/$ user:/$ mv: Permission denied
+user:/$ root:/$ root:/$ user:/$ user:/$ drwxrwx root an1
+-rw-r-- user lack_dest_x.txt
+-rw-r-- root newname.txt
+drwxr-x root normal1
+drwxr-x root normal2
+user:/$ root:/$ root:/$ user:/$ mv: Permission denied
+user:/$ root:/$ root:/$ user:/$ user:/$ drwxrwx root .
+drwxrwx root ..
+-rw-r-- user lack.txt
+user:/$ root:/$ root:/$ user:/$ mv: Permission denied
+user:/$ root:/$ root:/$ user:/$ user:/$ drwxrwx root an1
+-rw-r-- user lack_dest_w.txt
+-rw-r-- root newname.txt
+drwxr-x root normal1
+drwxr-x root normal2
+user:/$ user:/$ user:/$ root:/$ root:/$ root:/$ mv: File exists
+root:/$ mv: No such file
+root:/$ mv: Destination is a directory
+root:/$ mv: File exists
+root:/$ mv: Source is a directory
+root:/$ mv: No such file or directory
+root:/$ bye, root
