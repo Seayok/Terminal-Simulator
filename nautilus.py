@@ -536,7 +536,7 @@ def ls(current, user, path, arg):
 
 
     # Flag a
-    if "-a" not in arg and "-d" not in arg:
+    if "-a" not in arg:
         res_list = []
         for item in name_list:
             if item[0] != '.': # File and folder start with "."
