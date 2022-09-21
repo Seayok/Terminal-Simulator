@@ -493,7 +493,7 @@ def chown(current, user, path, arg):
 
 
 def ls(current, user, path, arg):  
-    origin_path = "/".join(path)
+    original_path = "/".join(path)
     pwd = False
     if len(path) == 0 : # The ls command receive no argument for path
         target = current
@@ -536,7 +536,7 @@ def ls(current, user, path, arg):
 
 
     # Flag a
-    if "-a" not in arg:
+    if "-a" not in arg and "-d" not in arg:
         res_list = []
         for item in name_list:
             if item[0] != '.': # File and folder start with "."
@@ -548,8 +548,8 @@ def ls(current, user, path, arg):
     for item in name_list:
 
         child = parent.children[item] # Get the Node of the child
-        if "-d" in arg and not pwd:
-            item = origin_path
+        if ("-d" in arg or original_path[0] == "/") and not pwd:
+            item = original_path
         if "-l" in arg:
             res += child.type + child.all_permission + ' ' + child.owner + ' ' + item + '\n'# Long listing format
         else:
