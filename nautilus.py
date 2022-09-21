@@ -493,7 +493,7 @@ def chown(current, user, path, arg):
 
 
 def ls(current, user, path, arg):  
-
+    origin_path = "/".join(path)
     pwd = False
     if len(path) == 0 : # The ls command receive no argument for path
         target = current
@@ -548,7 +548,8 @@ def ls(current, user, path, arg):
     for item in name_list:
 
         child = parent.children[item] # Get the Node of the child
-
+        if "-d" in arg:
+            item = origin_path
         if "-l" in arg:
             res += child.type + child.all_permission + ' ' + child.owner + ' ' + item + '\n'# Long listing format
         else:
