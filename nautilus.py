@@ -2,7 +2,7 @@
 # Due to their similarity in error handling and functionality
 
 # Node is an object represent both files and folders
-# The existence of a file only depend on if it is connected to / or not
+
 class Node:
     def __init__(self, parent, children, permission, owner, path, ancestor):
         self.parent = parent
@@ -122,10 +122,7 @@ def Error_handling(num, command):
 
 
 def check_and_split_syntax(cmd):
-    command = cmd.split(' ', 1)[0]
-    remain = cmd[len(command):]
-    if remain != '':
-        remain = remain[1:]
+    command, remain = check_double_quotation(cmd)
     #initialize
     arg_list = []
     valid_arg = True
@@ -149,39 +146,40 @@ def check_and_split_syntax(cmd):
             valid_arg, path_1 = check_arg(remain, ["-p"], arg_list)
         else:
             path_1 = remain
-        #su va ls co the khong nhan argument
         if valid_arg == True and not (command == 'ls' and path_1 == ''):
-            valid_path = check_path(path_1)
+            path_1, remain = check_double_quotation(path_1)
+            valid_path = check_path(path_1) and remain == ''
 
     elif command in ('adduser', 'deluser', 'su'):
         if not (command == "su" and remain == ''):
-            valid_user = check_user(remain)
-            user = remain.strip("\"")
+            user, remain = check_double_quotation(remain)
+            valid_user = check_user(user) and remain == ''
 
     elif command in ('cp', 'mv'):
-        valid_path, path_1, path_2 = check_double_path(remain)
-        path_2 = path_2.strip("\"").split("/")
+        path_1, remain = check_double_quotation(remain)
+        path_2, remain = check_double_quotation(remain)
+        valid_path = check_path(path_1) and check_path(path_2) and remain == ''
+        path_2 = path_2.split("/")
         path_list.append(path_2)
 
     elif command in ('chmod', 'chown'):
         valid_arg, remain = check_arg(remain, ["-r"], arg_list)
         if valid_arg:
             if command == "chmod":
-                format_string = remain.split(' ', 1)[0]
+                format_string, remain = check_double_quotation(remain)
+                path_1, remain = check_double_quotation(remain)
                 valid_format = check_format_string(format_string)
-                path_1 = remain[len(format_string):]
-                while len(path_1) > 0 and path_1[0] == ' ':
-                    path_1 = path_1[1:]
-                valid_path = check_path(path_1)
+                valid_path = check_path(path_1) and remain == ''
             else:
-                valid_path, user, path_1 = check_double_path(remain)
+                user, remain = check_double_quotation(remain)
+                path_1, remain = check_double_quotation(remain)
+                valid_path = check_path(path_1) and remain == ''
                 valid_user = check_user(user)
-                user = user.strip("\"")
 
     if path_1 == '':
         path_1 = []
     else:
-        path_1 = path_1.strip("\"").split("/")
+        path_1 = path_1.split("/")
     
     path_list.insert(0, path_1) 
     valid = valid and valid_arg and valid_user and valid_path
@@ -206,36 +204,8 @@ def check_format_string(remain):
     return True
 
 
-def check_double_path(remain):
-    res = False
-    path_1 = ''
-    path_2 = ''
-    if remain.count(' ') > 1:
-        if remain.count("\"") == 2:
-            index = remain.index("\"", 1)
-            if remain[0] == "\"":
-                path_1 = remain[:index + 1]
-                space = remain[index + 1]
-                path_2 = remain[index + 2:]
-            elif remain[-1] == "\"":
-                path_1 = remain[:index - 1]
-                space = remain[index - 1]
-                path_2 = remain[index:]
-            res = check_path(path_1) and check_path(path_2) and space == ' '
-        elif remain.count("\"") == 4 and remain[0] == "\"" and remain [-1] == "\"":
-                path = remain.split('\"')
-                path_1, space, path_2 = path[1:4]
-                path_1_check = f'\"{path_1} \"'
-                path_2_check = f'\"{path_2} \"'
-                res = check_path(path_1_check) and check_path(path_2_check) and space == ' '
-    elif remain.count(' ') == 1:
-        path_1, path_2 = remain.split(' ')
-        res = check_path(path_1) and check_path(path_2)
-    return (res, path_1, path_2)
-
-
 def check_path(path):
-    valid_syntax = [" ", ".", "..", "-", "_", "\"", "/"]
+    valid_syntax = [" ", ".", "..", "-", "_", "/"]
     path_check = path
 
     for syntax in valid_syntax:
@@ -243,12 +213,8 @@ def check_path(path):
 
     if not path_check.isalnum():
         return False
-    elif ("\"" in path or " " in path) and not (path.count("\"") == 2 and path[-1] == "\"" and path[0] =="\""):
-        return False
-    elif "\"" in path and len(path) == 2: # ""
-        return False
     else:
-        path = path.strip("\"").split("/")
+        path = path.split("/")
         if '' in path and ( path.count('') > 1 or path[0] != '' ) and path != ['','']: #path not /
             return False
         else:
@@ -256,11 +222,11 @@ def check_path(path):
 
 
 def check_arg(remain, arguments, arg_list):
-    while len(remain) > 2 and remain[2] == " " and remain[0] == "-":
-        arg = remain[:2]
+    while (len(remain) > 1 and remain[0] == "-") or\
+        (len(remain) > 3 and remain[0] == "\"" and remain[1] == "-"):
+        arg, remain = check_double_quotation(remain)
         if arg in arguments and arg not in arg_list:
             arg_list.append(arg)
-            remain = remain[3:]
         else:
             return (False, '')
     #if ls
@@ -268,7 +234,21 @@ def check_arg(remain, arguments, arg_list):
         arg_list.append(remain)
         remain = ''
     return (True, remain)
-    
+
+
+def check_double_quotation(string):
+    if len(string) > 1 and string[0] == "\"" and "\"" in string[1:]:
+        result = string.split("\"", 2)[1]
+        remain = string.split("\"", 2)[2].strip()
+        return result, remain
+    else:
+        result = string.split(" ", 1)[0]
+        if len(string.split(" ")) == 1:
+            return result, ''
+        else:
+            remain = string.split(" ", 1)[1].strip()
+            return result, remain
+
 
 def check_user(remain):
     return check_path(remain) and "/" not in remain
@@ -411,7 +391,6 @@ def rm_path(current, user, path):
         return 7
 
 
-#done error handling
 def rmdir(current, user, path):
     name = path[-1]
     target = current.go_to_folder(path)
@@ -421,7 +400,7 @@ def rmdir(current, user, path):
 
         if len(target.children) > 3 or (target.path != '/' and len(target.children) > 2): # Not empty dir
             return 9
-        elif target == current: #pwd
+        elif target == current: # PWD
             return 10
         elif not check_permission(target, user, ancestor_x=True, parent_w=True):
             return 1
@@ -436,88 +415,78 @@ def rmdir(current, user, path):
         return 2
 
 
-# Get all the children recursively
-def bfs(visit_list, user):
-    child_list = [visit_list[0]]
-    while True:
-        if len(visit_list) == 0:
-            return child_list
-        destination = visit_list[0]
-        visit_list.pop(0)
-        for child in destination.children:
-            tovisit = destination.children[child]
-            if tovisit.path != '' and child != "." and child != ".." and check_permission(tovisit, user, ancestor_x=True):
-                child_list.append(tovisit)
-                visit_list.append(tovisit)
-            elif not check_permission(tovisit, user, ancestor_x=True):
-                Error_handling(1, 'chmod')
-
-
 def chmod(current, user, path, format_string, arg):
     target = current.go_to_Node(path)
 
     if target["Error_mes"] == "Success":
         target = target["Stop_at"]
-        if not check_permission(target, user, ancestor_x=True):
+        u = ["-"] * 3
+        o = ["-"] * 3
+        perm = ["-"] * 3
+        format_string = format_string.replace('a', 'uo')
+        if 'o' in format_string:
+            o = perm
+        if 'u' in format_string:
+            u = perm
+        
+        if 'r' in format_string:
+            perm[0] = 'r'
+        if 'w' in format_string:
+            perm[1] = 'w'
+        if 'x' in format_string:
+            perm[2] = 'x'
+        
+        full_perm = u + o
+        visit_list = [target]
+
+        while len(visit_list) > 0: #DFS
+            destination = visit_list[-1]
+            visit_list.pop(-1)
+            if not check_permission(destination, user, ancestor_x=True):
                 Error_handling(1, 'chmod')
-        else:
-            u = ["-"] * 3
-            o = ["-"] * 3
-            perm = ["-"] * 3
-            format_string = format_string.replace('a', 'uo')
-            if 'o' in format_string:
-                o = perm
-            if 'u' in format_string:
-                u = perm
-            
-            if 'r' in format_string:
-                perm[0] = 'r'
-            if 'w' in format_string:
-                perm[1] = 'w'
-            if 'x' in format_string:
-                perm[2] = 'x'
-            
-            full_perm = u + o
-
-            child_list = [target]
+            elif user not in (destination.owner, "root"):
+                Error_handling(3, 'chmod')
+            else:
+                permission = list(destination.all_permission)
+                if '=' in format_string:
+                    if 'u' in format_string:
+                        permission[:3] = u
+                    if 'o' in format_string:
+                        permission[3:] = o
+                elif '+' in format_string:
+                    for index in range(6):
+                        if full_perm[index] != "-":
+                            permission[index] = full_perm[index]
+                elif '-' in format_string:
+                    for index in range(6):
+                        if full_perm[index] != "-":
+                            permission[index] = '-'
+                destination.all_permission = ''.join(permission)
             if "-r" in arg:
-                child_list = bfs([target], user)
-
-            for child in child_list:
-                if user not in ('root', child.owner):
-                    Error_handling(3, 'chmod')
-                else:
-                    permission = list(child.all_permission)
-                    if '=' in format_string:
-                        if 'u' in format_string:
-                            permission[:3] = u
-                        if 'o' in format_string:
-                            permission[3:] = o
-                    elif '+' in format_string:
-                        for index in range(6):
-                            if full_perm[index] != "-":
-                                permission[index] = full_perm[index]
-                    elif '-' in format_string:
-                        for index in range(6):
-                            if full_perm[index] != "-":
-                                permission[index] = '-'
-                    child.all_permission = ''.join(permission)
-                
+                child_list = sorted(destination.children.keys())
+                for child in child_list: # Child is the name assigned 
+                    if child not in ("..", "/", "."):
+                        tovisit = destination.children[child] # Get the Node from name
+                        visit_list.append(tovisit)
         return 0
     else:
-        return 2
+        return 2 # No such file or dir
 
 
 def chown(current, user, path, arg):
     target = current.go_to_Node(path)
     if target['Error_mes'] == "Success":
         target = target["Stop_at"]
-        child_list = [target]
-        if '-r' in arg:
-            child_list = bfs([target], 'root')
-
-        for child in child_list:
-            child.owner = user
+        visit_list = [target]
+        while len(visit_list) > 0:
+            destination = visit_list[0]
+            visit_list.pop(0)
+            destination.owner = user
+            if "-r" in arg:
+                for child in destination.children: # Child is the name assigned 
+                    if child not in ("..", "/", "."):
+                        tovisit = destination.children[child] # Get the Node from name
+                        visit_list.append(tovisit)
         return 0
     else:
         return 2
@@ -608,8 +577,8 @@ def main():
         if cmd == '':
             continue
 
-        valid, command, path_list, arg_list, user, format_string, valid_format = check_and_split_syntax(cmd)
-
+        valid, command, path_list, arg_list, user, format_string, valid_format =\
+        check_and_split_syntax(cmd)
 
         if not valid:
             Error_handling(13, command)
@@ -720,3 +689,4 @@ if __name__ == '__main__':
 #dictionary sorting error
 #white space between arg
 #simplify whenever can
+#chmod "u=rwx" "asdf"
