@@ -548,7 +548,7 @@ def ls(current, user, path, arg):
     for item in name_list:
 
         child = parent.children[item] # Get the Node of the child
-        if ("-d" in arg or original_path[0] == "/") and not pwd:
+        if not pwd and ("-d" in arg or original_path[0] == "/"):
             item = original_path
         if "-l" in arg:
             res += child.type + child.all_permission + ' ' + child.owner + ' ' + item + '\n'# Long listing format
