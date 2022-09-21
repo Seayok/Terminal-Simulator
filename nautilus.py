@@ -494,6 +494,7 @@ def chown(current, user, path, arg):
 
 def ls(current, user, path, arg):  
     original_path = "/".join(path)
+    print_one = False
     pwd = False
     if len(path) == 0 : # The ls command receive no argument for path
         target = current
@@ -513,6 +514,7 @@ def ls(current, user, path, arg):
         if not check_permission(target, user, ancestor_x=True, parent_r=True):
             return 1
         else:
+            print_one = True
             parent = target.parent
             name = target.path.split("/")[-1]
 
@@ -537,18 +539,22 @@ def ls(current, user, path, arg):
 
     # Flag a
     if "-a" not in arg:
-        res_list = []
-        for item in name_list:
-            if item[0] != '.': # File and folder start with "."
-                res_list.append(item)
-        name_list = res_list
+        if print_one:
+            if pwd or original_path[0] == ".":
+                name_list.pop(0)
+        else:
+            res_list = []
+            for item in name_list:
+                if item[0] != '.': # File and folder start with "."
+                    res_list.append(item)
+            name_list = res_list
                 
     res = ''
     # Flag l and result
     for item in name_list:
 
         child = parent.children[item] # Get the Node of the child
-        if not pwd and ("-d" in arg or original_path[0] == "/"):
+        if print_one:
             item = original_path
         if "-l" in arg:
             res += child.type + child.all_permission + ' ' + child.owner + ' ' + item + '\n'# Long listing format
