@@ -443,7 +443,6 @@ def chmod(current, user, path, format_string, arg):
 
         while len(visit_list) > 0: #DFS
             destination = visit_list[-1]
-            print(destination.path)
             visit_list.pop(-1)
             if user not in (destination.owner, "root"):
                 Error_handling(3, 'chmod')
