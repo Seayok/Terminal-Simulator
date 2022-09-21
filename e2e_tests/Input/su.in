@@ -1,0 +1,11 @@
+adduser user1
+su user1
+su "non exist user"
+adduser "this user exist..-__-"
+su "this user exist..-__-"
+adduser su
+su su
+su "asdf
+s"u" asd
+su
+exit

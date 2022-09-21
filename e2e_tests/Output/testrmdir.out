@@ -1,0 +1,28 @@
+root:/$ rmdir: Cannot remove pwd
+root:/$ root:/$ rmdir: Directory not empty
+root:/$ root:/a$ rmdir: Directory not empty
+root:/a$ root:/$ root:/$ root:/$ drwxr-x root .
+drwxr-x root ..
+drwxr-x root a
+root:/$ root:/$ drwxr-x root newfolder
+root:/$ root:/$ root:/$ root:/$ root:/another new/new$ root:/another new/new$ root:/$ drwxr-x root .
+drwxr-x root ..
+drwxr-x root a
+drwxr-x root another new
+root:/$ rmdir: No such file or directory
+root:/$ root:/$ rmdir: Not a directory
+root:/$ root:/$ rmdir: Directory not empty
+root:/$ root:/$ root:/test pwd$ rmdir: Cannot remove pwd
+root:/test pwd$ root:/$ root:/$ root:/$ /test permission/xbit
+root:/$ /test permission/wparentbit
+root:/$ drw-rw- root test permission/xbit
+root:/$ dr-xr-x root test permission/wparentbit
+root:/$ root:/$ user:/$ rmdir: Permission denied
+user:/$ rmdir: Permission denied
+user:/$ root:/$ /test permission/xbit
+root:/$ /test permission/wparentbit
+root:/$ user:/$ user:/$ user:/$ drwxrwx root .
+drwxr-x root ..
+user:/$ drwxrwx root .
+drwxr-x root ..
+user:/$ bye, user

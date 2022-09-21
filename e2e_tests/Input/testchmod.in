@@ -1,0 +1,76 @@
+mkdir normal
+ls -l
+chmod a=x normal
+ls -l
+chmod u=rw normal 
+ls -l
+chmod o= normal
+ls -l
+chmod o+wx normal
+ls -l
+chmod a-w normal 
+ls -l
+chmod u-rwx normal
+ls -l
+mkdir -p test/test_..
+cd test/test_..
+chmod a=rwx ..
+ls -l -d /test
+cd /
+chmod a=rw notfoundfile
+adduser user
+mkdir -p "test operation not_permitted/testdir"
+su user
+chmod a=rwx "test operation not_permitted/testdir"
+ls -l -d "test operation not_permitted/testdir"
+su
+chown user "test operation not_permitted/testdir"
+ls -l -d "test operation not_permitted/testdir"
+su user
+chmod a=rwx "test operation not_permitted/testdir"
+ls -l -d "test operation not_permitted/testdir"
+mkdir -p "test permission/ancestorx"
+touch "test permission/ancestorx/testfile"
+chown user "test permission/ancestorx/testfile"
+ls -l  "test permission/ancestorx/testfile"
+chmod o-x "test permission"
+su user
+chmod a=rwx "test permission/ancestorx/testfile"
+su
+chmod o+x "test permission"
+su user
+chmod a=rwx "test permission/ancestorx/testfile"
+ls -l "test permission/ancestorx/testfile"
+su
+touch test_invalid_mode
+chmod a+=x test_invalid_mode
+ls -l
+chmod a==rwx test_invalid_mode
+chmod b+rchmod u test_invalid_mode
+chmod a+rui test_invalid_mode
+chmod a"r test_invalid_mode
+chmod $@#=@#
+chmod 
+ls -l
+touch "test valid mode"
+chmod =rwx "test valid mode"
+ls -l
+chmod uoaaauuuoo-rrrrwwrwr "test valid mode"
+ls -l
+touch "test root recursive"
+chmod -r a=r /
+ls -l -d -a
+ls -l
+chmod -r a=rwx /
+mkdir -p test_recursive/dir
+touch test_recursive/file
+chown -r user test_recursive
+ls -l test_recursive
+su user
+chmod -r o-x test_recursive
+ls -l -d -a test_recursive
+ls -l -a test_recursive
+chmod -r u-x test_recursive
+ls -l -d test_recursive
+ls -l test_recursive
+exit

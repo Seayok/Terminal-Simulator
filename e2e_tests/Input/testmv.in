@@ -1,0 +1,68 @@
+adduser user
+mkdir normal1
+touch normal1/normal.txt
+mkdir normal2
+mv normal1/normal.txt normal2/normal_copy.txt
+ls -l normal1
+ls -l normal2
+touch rename.txt
+chmod a=rwx rename.txt
+ls -l
+chmod a=rwx /
+su user
+mv rename.txt newname.txt
+ls -l
+su
+chmod o-w /
+
+touch lack_parent_w.txt
+chmod a=rwx lack_parent_w.txt
+su user
+mv lack_parent_w.txt lack_x.txt
+su
+chmod o=rwx /
+su user
+mv lack_parent_w.txt lack_x.txt
+ls -l
+su
+mkdir -p an1/an2
+mv lack_x.txt an1/an2/lack_x.txt
+chmod a=rw an1
+chmod a=rwx an1/an2
+su user
+mv an1/an2/lack_x.txt lack_x_mv.txt
+su
+chmod a=rwx an1
+su user
+mv an1/an2/lack_x.txt lack_dest_x.txt
+ls -l
+su
+chmod a=rw an1
+su user
+mv lack_dest_x.txt an1/an2/lack.txt
+su
+chmod a=rwx /an1
+su user
+mv lack_dest_x.txt an1/an2/lack.txt
+ls -l -a an1/an2
+su
+chmod o=rx /
+su user
+mv an1/an2/lack.txt lack_dest_w.txt
+su
+chmod o=rwx /
+su user
+mv an1/an2/lack.txt lack_dest_w.txt
+ls -l
+
+
+su
+touch file_exist.txt
+touch normal1/normal2.txt
+mv file_exist.txt normal1/normal2.txt
+mv normal/nothing.txt nothing_folder/nothing.txt
+mv file_exist.txt normal1
+mv normal1 file_exist.txt
+mv normal1 newfile.txt
+mv normal1/normal2.txt nothing_folder/nothing.txt
+exit

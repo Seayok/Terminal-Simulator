@@ -1,0 +1,33 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/new/new$ rm: No such file
+root:/new/new$ ls: No such file or directory
+root:/new/new$ rm: No such file
+root:/new/new$ root:/new/new$ rm: Is a directory
+root:/new/new$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ /test permission
+/test permission/wparent
+/test permission/wparent/testfile
+/test permission/wpath
+/test permission/wpath/testfile
+/test permission/xancestor
+/test permission/xancestor/ancestor
+/test permission/xancestor/ancestor/testfile
+root:/$ drwxrwx root wparent
+drwxrwx root wpath
+drwxrwx root xancestor
+root:/$ drwxrwx root test permission
+root:/$ -rwxrwx root test permission/wpath/testfile
+root:/$ /test permission/wpath/testfile
+root:/$ /test permission/xancestor
+root:/$ /test permission/wparent
+root:/$ user:/$ rm: Permission denied
+user:/$ rm: Permission denied
+user:/$ rm: Permission denied
+user:/$ root:/$ /test permission/wpath/testfile
+root:/$ /test permission/xancestor
+root:/$ /test permission/wparent
+root:/$ user:/$ user:/$ user:/$ user:/$ drwxrwx root .
+drwxrwx root ..
+user:/$ drwxrwx root .
+drwxrwx root ..
+user:/$ drwxrwx root .
+drwxrwx root ..
+user:/$ user:/$ bye, user

@@ -122,7 +122,6 @@ def Error_handling(num, command):
 
 
 def check_and_split_syntax(cmd):
-    command, remain = check_double_quotation(cmd)
     #initialize
     arg_list = []
     valid_arg = True
@@ -134,6 +133,9 @@ def check_and_split_syntax(cmd):
     format_string = ''
     user = ''
     path_1 = ''
+
+    command, remain = check_double_quotation(cmd)
+    valid = check_invalid_char(command)
 
 
     if command in ('exit', 'pwd') and remain != '':
@@ -153,7 +155,7 @@ def check_and_split_syntax(cmd):
     elif command in ('adduser', 'deluser', 'su'):
         if not (command == "su" and remain == ''):
             user, remain = check_double_quotation(remain)
-            valid_user = check_user(user) and remain == ''
+            valid_user = check_invalid_char(user) and remain == ''
 
     elif command in ('cp', 'mv'):
         path_1, remain = check_double_quotation(remain)
@@ -168,13 +170,15 @@ def check_and_split_syntax(cmd):
             if command == "chmod":
                 format_string, remain = check_double_quotation(remain)
                 path_1, remain = check_double_quotation(remain)
+                if not check_invalid_char(format_string, ["=", "-", "+"]):
+                    valid = False
                 valid_format = check_format_string(format_string)
                 valid_path = check_path(path_1) and remain == ''
             else:
                 user, remain = check_double_quotation(remain)
                 path_1, remain = check_double_quotation(remain)
                 valid_path = check_path(path_1) and remain == ''
-                valid_user = check_user(user)
+                valid_user = check_invalid_char(user)
 
     if path_1 == '':
         path_1 = []
@@ -205,32 +209,26 @@ def check_format_string(remain):
 
 
 def check_path(path):
-    valid_syntax = [" ", ".", "..", "-", "_", "/"]
-    path_check = path
-
-    for syntax in valid_syntax:
-        path_check = path_check.replace(syntax, "a")
-
-    if not path_check.isalnum():
-        return False
-    else:
+    if check_invalid_char(path,["/"]):
         path = path.split("/")
         if '' in path and ( path.count('') > 1 or path[0] != '' ) and path != ['','']: #path not /
             return False
         else:
             return True
+    else:
+        return False
 
 
 def check_arg(remain, arguments, arg_list):
-    while (len(remain) > 1 and remain[0] == "-") or\
-        (len(remain) > 3 and remain[0] == "\"" and remain[1] == "-"):
+    while (len(remain) > 2 and remain[0] == "-" and remain[2] == " ") or\
+        (len(remain) > 4 and remain[0] == "\"" and remain[1] == "-"):
         arg, remain = check_double_quotation(remain)
         if arg in arguments and arg not in arg_list:
             arg_list.append(arg)
         else:
             return (False, '')
     #if ls
-    if "-l" in arguments and remain in arguments and not remain in arg_list:
+    if "-l" in arguments and remain in arguments and remain not in arg_list:
         arg_list.append(remain)
         remain = ''
     return (True, remain)
@@ -250,8 +248,12 @@ def check_double_quotation(string):
             return result, remain
 
 
-def check_user(remain):
-    return check_path(remain) and "/" not in remain
+def check_invalid_char(string, addition=[]):
+    valid_syntax = [" ", ".", "..", "-", "_"] + addition
+
+    for syntax in valid_syntax:
+        string = string.replace(syntax, "a") 
+    return string.isalnum()
 
 
 # Function to check permission that is needed for each of the command
@@ -441,11 +443,12 @@ def chmod(current, user, path, format_string, arg):
 
         while len(visit_list) > 0: #DFS
             destination = visit_list[-1]
+            print(destination.path)
             visit_list.pop(-1)
-            if not check_permission(destination, user, ancestor_x=True):
-                Error_handling(1, 'chmod')
-            elif user not in (destination.owner, "root"):
+            if user not in (destination.owner, "root"):
                 Error_handling(3, 'chmod')
+            elif not check_permission(destination, user, ancestor_x=True):
+                Error_handling(1, 'chmod')
             else:
                 permission = list(destination.all_permission)
                 if '=' in format_string:
@@ -463,7 +466,7 @@ def chmod(current, user, path, format_string, arg):
                             permission[index] = '-'
                 destination.all_permission = ''.join(permission)
             if "-r" in arg:
-                child_list = sorted(destination.children.keys())
+                child_list = sorted(destination.children.keys(), reverse=True)
                 for child in child_list: # Child is the name assigned 
                     if child not in ("..", "/", "."):
                         tovisit = destination.children[child] # Get the Node from name
@@ -676,10 +679,6 @@ Stopping now without having performed any action''')
                 Error_handling(15 ,command)
             else:
                 Error_handling(chown(current, user, path, arg_list), command)
-
-        elif command == '':
-            pass
-
         else:
             Error_handling(18, command)
 
@@ -691,7 +690,5 @@ if __name__ == '__main__':
 #test syntax
 #error handling lai
 #Stress test
-#dictionary sorting error
-#white space between arg
 #simplify whenever can
 #chmod "u=rwx" "asdf"

@@ -1,0 +1,17 @@
+mkdir -p first/dir/dir1
+touch first/dir/file1.txt
+touch first/file2.txt
+mkdir -p second/dir/dir1
+mkdir second/dir/dir2
+touch second/file.txt
+adduser user
+chown user first
+chown user first/dir/dir1
+chown user first/file2.txt
+chmod a-x first
+chown user second/file.txt
+chmod a-x second
+su user
+chmod -r "a-x" /
+ls -l -d -a
+exit

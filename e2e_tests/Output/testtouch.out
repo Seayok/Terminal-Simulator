@@ -1,0 +1,13 @@
+root:/$ root:/$ root:/$ touch: Invalid syntax
+root:/$ root:/$ root:/$ touch: Invalid syntax
+root:/$ touch: Invalid syntax
+root:/$ root:/$ root:/$ touch: Ancestor directory does not exist
+root:/$ root:/$ root:/$ -rw-r-- root -a
+-rw-r-- root -p
+drwxr-x root b
+-rw-r-- root test.txt
+root:/$ root:/$ root:/$ root:/$ root:/$ /test permission
+root:/$ user:/$ touch: Permission denied
+user:/$ touch: Permission denied
+user:/$ touch: Ancestor directory does not exist
+user:/$ bye, user

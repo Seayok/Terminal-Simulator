@@ -1,0 +1,46 @@
+rmdir .
+mkdir a
+rmdir .
+cd a
+rmdir ..
+cd /
+mkdir newfolder
+rmdir newfolder
+ls -l -a
+mkdir -p new/newfolder
+ls -l new
+rmdir /new/newfolder
+ls -l new
+mkdir -p "another new/new"
+cd "another new/new"
+rmdir /new
+cd /
+ls -l -a
+rmdir non_exist
+touch "this is a file"
+rmdir "this is a file"
+mkdir -p "not empty/a"
+rmdir "not empty"
+mkdir "test pwd"
+cd "test pwd"
+rmdir "/test pwd"
+cd /
+mkdir -p "test permission/xbit/sample dir"
+mkdir -p "test permission/wparentbit/ sample dir"
+chmod a=rw "test permission/xbit"
+chmod a=rx "test permission/wparentbit"
+ls -l -d "test permission/xbit"
+ls -l -d "test permission/wparentbit" 
+adduser user
+su user
+rmdir "test permission/xbit/sample dir"
+rmdir "test permission/wparentbit/ sample dir"
+su
+chmod a+x "test permission/xbit"
+chmod a+w "test permission/wparentbit"
+su user
+rmdir "test permission/xbit/sample dir"
+rmdir "test permission/wparentbit/ sample dir"
+ls -l -a "test permission/xbit"
+ls -l -a "test permission/wparentbit"
+exit

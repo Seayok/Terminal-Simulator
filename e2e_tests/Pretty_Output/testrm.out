@@ -1,0 +1,78 @@
+root:/$ touch newfile
+root:/$ rm newfile
+root:/$ ls -l
+root:/$ mkdir newfolder
+root:/$ touch newfolder/newfile
+root:/$ mkdir -p new/new
+root:/$ cd new/new
+root:/new/new$ rm newfolder/newfile
+rm: No such file
+root:/new/new$ ls -l -a newfolder
+ls: No such file or directory
+root:/new/new$ rm "non exist file"
+rm: No such file
+root:/new/new$ mkdir "this is a dir"
+root:/new/new$ rm "this is a dir"
+rm: Is a directory
+root:/new/new$ cd /
+root:/$ adduser user
+root:/$ mkdir "test permission"
+root:/$ mkdir "test permission/wpath"
+root:/$ mkdir -p "test permission/xancestor/ancestor"
+root:/$ mkdir "test permission/wparent"
+root:/$ touch "test permission/wpath/testfile"
+root:/$ touch "test permission/xancestor/ancestor/testfile"
+root:/$ touch "test permission/wparent/testfile"
+root:/$ chmod -r a=rwx "test permission"
+/test permission
+/test permission/wparent
+/test permission/wparent/testfile
+/test permission/wpath
+/test permission/wpath/testfile
+/test permission/xancestor
+/test permission/xancestor/ancestor
+/test permission/xancestor/ancestor/testfile
+root:/$ ls -l "test permission"
+drwxrwx root wparent
+drwxrwx root wpath
+drwxrwx root xancestor
+root:/$ ls -l -d "test permission"
+drwxrwx root test permission
+root:/$ ls -l "test permission/wpath/testfile" 
+-rwxrwx root test permission/wpath/testfile
+root:/$ chmod a-w "test permission/wpath/testfile"
+/test permission/wpath/testfile
+root:/$ chmod a-x "test permission/xancestor"
+/test permission/xancestor
+root:/$ chmod a-w "test permission/wparent"
+/test permission/wparent
+root:/$ su user
+user:/$ rm "test permission/wpath/testfile"
+rm: Permission denied
+user:/$ rm "test permission/xancestor/ancestor/testfile"
+rm: Permission denied
+user:/$ rm "test permission/wparent/testfile"
+rm: Permission denied
+user:/$ su
+root:/$ chmod a+w "test permission/wpath/testfile"
+/test permission/wpath/testfile
+root:/$ chmod a+x "test permission/xancestor"
+/test permission/xancestor
+root:/$ chmod a+w "test permission/wparent"
+/test permission/wparent
+root:/$ su user
+user:/$ rm "test permission/wpath/testfile"
+user:/$ rm "test permission/xancestor/ancestor/testfile"
+user:/$ rm "test permission/wparent/testfile"
+user:/$ ls -l -a "test permission/wpath"
+drwxrwx root .
+drwxrwx root ..
+user:/$ ls -l -a "test permission/xancestor/ancestor"
+drwxrwx root .
+drwxrwx root ..
+user:/$ ls -l -a "test permission/wparent"
+drwxrwx root .
+drwxrwx root ..
+user:/$ 
+user:/$ exit
+bye, user

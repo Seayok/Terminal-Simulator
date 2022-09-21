@@ -1,0 +1,48 @@
+root:/$ root:/$ root:/$ a
+root:/$ root:/$ b
+root:/$ root:/$ cd: No such file or directory
+root:/$ /
+root:/$ root:/$ root:/cd$ root:/$ root:/$       test
+a
+cd
+root:/$ root:/$ mkdir: File exists
+root:/$ mkdir: File exists
+root:/$ mkdir: Invalid syntax
+root:/$ mkdir: Invalid syntax
+root:/$ mkdir: Invalid syntax
+root:/$ root:/$ root:/test_different_path$ ls: No such file or directory
+root:/test_different_path$ root:/test_different_path$ root:/test_different_path$ drwxr-x root -d
+drwxr-x root .
+drwxr-x root ..
+drwxr-x root .d
+root:/test_different_path$ mkdir: Ancestor directory does not exist
+root:/test_different_path$ drwxr-x root -d
+drwxr-x root .
+drwxr-x root ..
+drwxr-x root .d
+root:/test_different_path$ root:/test_different_path$ root:/test_different_path$ mkdir: File exists
+root:/test_different_path$ root:/test_different_path$ root:/test_different_path$ root:/test_different_path$ mkdir: File exists
+root:/test_different_path$ drwxr-x root -a
+drwxr-x root -p
+drwxr-x root a
+-rw-r-- root exist file
+root:/test_different_path$ drwxr-x root -d
+drwxr-x root b
+root:/test_different_path$ root:/$ root:/$ root:/$ /test_w_permission
+root:/$ /test_x_permission
+root:/$ user:/$ mkdir: Permission denied
+user:/$ mkdir: Permission denied
+user:/$ root:/$ root:/$ root:/$ drwxr-x root       test
+drwxr-x root a
+drwxr-x root cd
+drwxr-x root test_different_path
+drwxr-x root test_p
+drwxr-x root test_w_permission
+drwxrw- root test_x_permission
+root:/$ root:/test_p$ root:/test_p$ drwxr-x root silent
+root:/test_p$ /test_p/silent
+root:/test_p$ user:/test_p$ user:/test_p$ cd: No such file or directory
+user:/test_p$ /test_p
+user:/test_p$ user:/$ user:/$ cd: No such file or directory
+user:/$ user:/$ root:/$ root:/$ root:/$ user:/$ user:/$ /
+user:/$ bye, user

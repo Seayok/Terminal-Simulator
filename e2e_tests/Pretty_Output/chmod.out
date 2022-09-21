@@ -1,0 +1,7 @@
+root:/$ touch test
+root:/$ chmod "o+   x" test
+chmod: Invalid mode
+root:/$ ls -l
+-rw-r-- root test
+root:/$ exit
+bye, root

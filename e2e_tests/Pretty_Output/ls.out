@@ -1,0 +1,25 @@
+root:/$ ls -d 
+root:/$ ls -d -a
+.
+root:/$ ls -d -a -l
+drwxr-x root .
+root:/$ mkdir -l
+root:/$ ls -d -a -l
+drwxr-x root .
+root:/$ ls -d -a "-l"
+-l
+root:/$ ls -d -a -l -l
+drwxr-x root -l
+root:/$ mkdir a
+root:/$ mkdir mkdir
+root:/$ 
+root:/$ ls ls
+ls: No such file or directory
+root:/$ ls ""
+ls: Invalid syntax
+root:/$ mkdir ls
+root:/$ touch ls/c
+root:/$ ls ls
+c
+root:/$ exit
+bye, root

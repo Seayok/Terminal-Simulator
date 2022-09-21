@@ -1,0 +1,74 @@
+root:/$ rmdir .
+rmdir: Cannot remove pwd
+root:/$ mkdir a
+root:/$ rmdir .
+rmdir: Directory not empty
+root:/$ cd a
+root:/a$ rmdir ..
+rmdir: Directory not empty
+root:/a$ cd /
+root:/$ mkdir newfolder
+root:/$ rmdir newfolder
+root:/$ ls -l -a
+drwxr-x root .
+drwxr-x root ..
+drwxr-x root a
+root:/$ mkdir -p new/newfolder
+root:/$ ls -l new
+drwxr-x root newfolder
+root:/$ rmdir /new/newfolder
+root:/$ ls -l new
+root:/$ mkdir -p "another new/new"
+root:/$ cd "another new/new"
+root:/another new/new$ rmdir /new
+root:/another new/new$ cd /
+root:/$ ls -l -a
+drwxr-x root .
+drwxr-x root ..
+drwxr-x root a
+drwxr-x root another new
+root:/$ rmdir non_exist
+rmdir: No such file or directory
+root:/$ touch "this is a file"
+root:/$ rmdir "this is a file"
+rmdir: Not a directory
+root:/$ mkdir -p "not empty/a"
+root:/$ rmdir "not empty"
+rmdir: Directory not empty
+root:/$ mkdir "test pwd"
+root:/$ cd "test pwd"
+root:/test pwd$ rmdir "/test pwd"
+rmdir: Cannot remove pwd
+root:/test pwd$ cd /
+root:/$ mkdir -p "test permission/xbit/sample dir"
+root:/$ mkdir -p "test permission/wparentbit/ sample dir"
+root:/$ chmod a=rw "test permission/xbit"
+/test permission/xbit
+root:/$ chmod a=rx "test permission/wparentbit"
+/test permission/wparentbit
+root:/$ ls -l -d "test permission/xbit"
+drw-rw- root test permission/xbit
+root:/$ ls -l -d "test permission/wparentbit" 
+dr-xr-x root test permission/wparentbit
+root:/$ adduser user
+root:/$ su user
+user:/$ rmdir "test permission/xbit/sample dir"
+rmdir: Permission denied
+user:/$ rmdir "test permission/wparentbit/ sample dir"
+rmdir: Permission denied
+user:/$ su
+root:/$ chmod a+x "test permission/xbit"
+/test permission/xbit
+root:/$ chmod a+w "test permission/wparentbit"
+/test permission/wparentbit
+root:/$ su user
+user:/$ rmdir "test permission/xbit/sample dir"
+user:/$ rmdir "test permission/wparentbit/ sample dir"
+user:/$ ls -l -a "test permission/xbit"
+drwxrwx root .
+drwxr-x root ..
+user:/$ ls -l -a "test permission/wparentbit"
+drwxrwx root .
+drwxr-x root ..
+user:/$ exit
+bye, user

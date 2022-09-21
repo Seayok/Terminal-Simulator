@@ -1,0 +1,19 @@
+root:/$ adduser user1
+root:/$ su user1
+user1:/$ su "non exist user"
+su: Invalid user
+user1:/$ adduser "this user exist..-__-"
+adduser: Operation not permitted
+user1:/$ su "this user exist..-__-"
+su: Invalid user
+user1:/$ adduser su
+adduser: Operation not permitted
+user1:/$ su su
+su: Invalid user
+user1:/$ su "asdf
+su: Invalid syntax
+user1:/$ s"u" asd
+s"u": Invalid syntax
+user1:/$ su
+root:/$ exit
+bye, root

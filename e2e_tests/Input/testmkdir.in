@@ -1,0 +1,67 @@
+adduser user
+mkdir a
+ls
+mkdir /a/b
+ls /a
+mkdir -p "a/b/a/b/a/a/test path"
+cd a/b/a/b/a/a/a
+pwd
+mkdir cd
+cd cd
+cd /
+mkdir "      test"
+ls
+mkdir -p ..
+mkdir ..
+mkdir .
+mkdir ""
+mkdir
+mkdir !!!
+mkdir test_different_path
+cd test_different_path
+ls -l a/b
+mkdir -p "a/-d"
+mkdir -p a/.d
+ls -l -a a
+mkdir a/b/../d
+ls -l -a a
+mkdir a/b
+touch "exist file"
+mkdir "exist file"
+mkdir -a
+mkdir -p
+mkdir -p -a/d
+mkdir a/.
+ls -l
+ls -l a
+cd /
+mkdir test_w_permission
+mkdir -p test_x_permission/parent
+chmod o=rx test_w_permission
+chmod o=rw test_x_permission
+su user
+mkdir test_w_permission/b
+mkdir test_x_pe
+su
+cd /
+mkdir test_p
+ls -l
+cd test_p
+mkdir -p silent/3_b
+ls -l
+chmod a=rwx silent
+su user
+mkdir -p silent/3_b/3_c/3_d
+cd silent/3_b/3_c
+pwd
+cd /
+mkdir -p silent/3_e/3_f
+cd silent/3_e/3_f
+cd /
+su
+mkdir silent
+touch silent/file.txt
+su user
+mkdir -p silent/file.txt/dir
+pwd
+exit

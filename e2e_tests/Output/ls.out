@@ -1,0 +1,9 @@
+root:/$ root:/$ .
+root:/$ drwxr-x root .
+root:/$ root:/$ drwxr-x root .
+root:/$ -l
+root:/$ drwxr-x root -l
+root:/$ root:/$ root:/$ root:/$ ls: No such file or directory
+root:/$ ls: Invalid syntax
+root:/$ root:/$ root:/$ c
+root:/$ bye, root

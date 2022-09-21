@@ -1,0 +1,11 @@
+root:/$ /
+root:/$ root:/$ root:/$ root:/$ root:/$ a
+another a
+root:/$ root:/a$ root:/another a/b/c/d$ /another a/b/c/d
+root:/another a/b/c/d$ root:/another a/b/c/d$ root:/another a/b/c$ root:/another a/b/c$ root:/$ root:/$ /b
+root:/$ /a
+root:/$ user:/$ cd: Destination is a file
+user:/$ cd: Permission denied
+user:/$ cd: No such file or directory
+user:/$ cd: Invalid syntax
+user:/$ bye, user

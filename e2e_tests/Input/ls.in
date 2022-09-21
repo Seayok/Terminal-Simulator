@@ -1,0 +1,16 @@
+ls -d 
+ls -d -a
+ls -d -a -l
+mkdir -l
+ls -d -a -l
+ls -d -a "-l"
+ls -d -a -l -l
+mkdir a
+mkdir mkdir
+
+ls ls
+ls ""
+mkdir ls
+touch ls/c
+ls ls
+exit
