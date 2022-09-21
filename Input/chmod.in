@@ -1,3 +1,0 @@
-touch test
-chmod "o+   x" test
-ls -l
