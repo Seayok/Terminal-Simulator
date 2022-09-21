@@ -631,11 +631,9 @@ def main():
         elif command == 'su':
             if user == '':
                 active_user = 'root'
-                current = root
             else:
                 if user in user_list:
                     active_user = user
-                    current = root
                 else:
                     Error_handling(15, command)
         elif command == "deluser":
