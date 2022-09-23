@@ -1,0 +1,11 @@
+root:/$ touch: Invalid syntax
+root:/$ touch: Invalid syntax
+root:/$ touch: Invalid syntax
+root:/$ Touch: Command not found
+root:/$ touch: Invalid syntax
+root:/$ root:/$ touch: Ancestor directory does not exist
+root:/$ root:/$ root:/$ user:/$ drwxr-x root .
+user:/$ touch: Permission denied
+user:/$ touch: Permission denied
+user:/$ touch: Ancestor directory does not exist
+user:/$ bye, user

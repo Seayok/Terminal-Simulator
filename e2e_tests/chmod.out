@@ -1,0 +1,55 @@
+root:/$ root:/$ drwxr-x root normal
+root:/$ root:/$ d--x--x root normal
+root:/$ root:/$ drw---x root normal
+root:/$ root:/$ drw---- root normal
+root:/$ root:/$ drw--wx root normal
+root:/$ root:/$ dr----x root normal
+root:/$ root:/$ d-----x root normal
+root:/$ root:/$ root:/test/test_..$ root:/test/test_..$ drwxrwx root /test
+root:/test/test_..$ root:/$ chmod: No such file or directory
+root:/$ root:/$ root:/$ user:/$ chmod: Operation not permitted
+user:/$ drwxr-x root test operation not_permitted/testdir
+user:/$ root:/$ root:/$ drwxr-x user test operation not_permitted/testdir
+root:/$ user:/$ user:/$ drwxrwx user test operation not_permitted/testdir
+user:/$ root:/$ root:/$ root:/$ root:/$ -rw-r-- user test permission/ancestorx/testfile
+root:/$ root:/$ user:/$ chmod: Permission denied
+user:/$ root:/$ root:/$ user:/$ user:/$ -rwxrwx user test permission/ancestorx/testfile
+user:/$ user:/$ d-----x root normal
+drwxrwx root test
+drwxr-x root test operation not_permitted
+drwxr-x root test permission
+user:/$ root:/$ root:/$ root:/$ d-----x root normal
+drwxrwx root test
+drwxr-x root test operation not_permitted
+drwxr-x root test permission
+-rw-r-- root test valid mode
+root:/$ root:/$ d-----x root normal
+drwxrwx root test
+drwxr-x root test operation not_permitted
+drwxr-x root test permission
+-rw-rw- root test valid mode
+root:/$ root:/$ d-----x root normal
+drwxrwx root test
+drwxr-x root test operation not_permitted
+drwxr-x root test permission
+------- root test valid mode
+root:/$ root:/$ root:/$ dr--r-- root .
+root:/$ dr--r-- root normal
+dr--r-- root test
+dr--r-- root test operation not_permitted
+dr--r-- root test permission
+-r--r-- root test root recursive
+-r--r-- root test valid mode
+root:/$ root:/$ root:/$ root:/$ root:/$ drwxr-x user dir
+-rw-r-- user file
+root:/$ user:/$ user:/$ drwxr-- user test_recursive
+user:/$ drwxr-- user .
+drwxrwx root ..
+drwxr-- user dir
+-rw-r-- user file
+user:/$ chmod: Permission denied
+chmod: Permission denied
+user:/$ drw-r-- user test_recursive
+user:/$ drwxr-- user dir
+-rw-r-- user file
+user:/$ bye, user

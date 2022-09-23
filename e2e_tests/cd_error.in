@@ -1,0 +1,11 @@
+mkdir dir
+ls -l
+touch file
+chmod o-x dir
+ls -l
+adduser user
+su user
+cd dir
+cd file
+cd "not exist"
+exit

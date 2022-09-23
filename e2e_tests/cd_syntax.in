@@ -1,0 +1,16 @@
+mkdir valid
+mkdir cd
+mkdir "VaLiD.._-32 "
+cd valid
+cd /../././.. 
+ "cd"    "valid"
+    "cd"      "../VaLiD.._-32 "
+cd /
+cd cd
+cd a//b///c//c
+cd too many arguments
+cd 
+cd &
+cd "   valid"
+cd Inv@lid
+exit

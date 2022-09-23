@@ -1,0 +1,8 @@
+root:/$ deluser: The user does not exist
+root:/$ root:/$ user1:/$ deluser: Operation not permitted
+user1:/$ root:/$ WARNING: You are just about to delete the root account
+Usually this is never required as it may render the whole system unusable
+If you really want this, call deluser with parameter --force
+(but this `deluser` does not allow `--force`, haha)
+Stopping now without having performed any action
+root:/$ bye, root

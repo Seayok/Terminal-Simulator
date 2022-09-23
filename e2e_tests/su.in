@@ -1,0 +1,12 @@
+adduser user1
+su user1
+su
+adduser "this user exist..-__-"
+su "this user exist..-__-"
+ls -l -d -a ..
+mkdir "test permission of new user"
+su 
+adduser su
+su su
+su root
+exit

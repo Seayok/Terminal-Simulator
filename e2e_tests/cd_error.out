@@ -1,0 +1,7 @@
+root:/$ root:/$ drwxr-x root dir
+root:/$ root:/$ root:/$ drwxr-- root dir
+-rw-r-- root file
+root:/$ root:/$ user:/$ cd: Permission denied
+user:/$ cd: Destination is a file
+user:/$ cd: No such file or directory
+user:/$ bye, user

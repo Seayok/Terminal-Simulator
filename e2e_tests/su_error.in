@@ -1,0 +1,6 @@
+su "non exist user"
+su "asdf
+s"u" asd
+su many arguments
+Su
+exit

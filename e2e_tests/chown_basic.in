@@ -1,0 +1,9 @@
+mkdir dir
+touch file
+adduser testuser
+chown testuser file
+chown testuser dir
+ls -a -l
+chown testuser .
+ls -l -d -a .
+exit

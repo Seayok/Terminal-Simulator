@@ -1,0 +1,5 @@
+root:/$ ls: No such file or directory
+root:/$ root:/$ -q
+root:/$ ls: Invalid syntax
+root:/$ ls: Invalid syntax
+root:/$ bye, root

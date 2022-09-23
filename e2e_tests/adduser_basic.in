@@ -1,0 +1,9 @@
+adduser user1
+su user1
+chown user1 /
+su
+chown user1 /
+ls -l -d -a
+adduser "valid user..-_-"
+su "valid user..-_-"
+exit

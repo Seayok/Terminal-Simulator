@@ -1,0 +1,5 @@
+root:/$ root:/$ root:/$ root:/$ drwxr-x root another dir
+drwxr-x root dir
+root:/$ root:/dir$ root:/another dir/b/c/d$ /another dir/b/c/d
+root:/another dir/b/c/d$ root:/another dir/b/c/d$ root:/another dir/b/c$ root:/another dir/b/c$ root:/$ /
+root:/$ bye, root

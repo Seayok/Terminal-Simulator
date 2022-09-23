@@ -1,0 +1,45 @@
+touch newfile
+rm newfile
+ls -l
+mkdir newfolder
+touch newfolder/newfile
+mkdir -p new/new
+cd new/new
+rm /newfolder/newfile
+ls -l -a /newfolder
+rm "non exist file"
+mkdir "this is a dir"
+rm "this is a dir"
+cd /
+adduser user
+mkdir "test permission"
+mkdir "test permission/wpath"
+mkdir -p "test permission/xancestor/ancestor"
+mkdir "test permission/wparent"
+touch "test permission/wpath/testfile"
+touch "test permission/xancestor/ancestor/testfile"
+touch "test permission/wparent/testfile"
+chmod -r a=rwx "test permission"
+ls -l "test permission"
+ls -l -d "test permission"
+ls -l "test permission/wpath/testfile" 
+chmod a-w "test permission/wpath/testfile"
+chmod a-x "test permission/xancestor"
+chmod a-w "test permission/wparent"
+su user
+rm "test permission/wpath/testfile"
+rm "test permission/xancestor/ancestor/testfile"
+rm "test permission/wparent/testfile"
+su
+chmod a+w "test permission/wpath/testfile"
+chmod a+x "test permission/xancestor"
+chmod a+w "test permission/wparent"
+su user
+rm "test permission/wpath/testfile"
+rm "test permission/xancestor/ancestor/testfile"
+rm "test permission/wparent/testfile"
+ls -l -a "test permission/wpath"
+ls -l -a "test permission/xancestor/ancestor"
+ls -l -a "test permission/wparent"
+
+exit

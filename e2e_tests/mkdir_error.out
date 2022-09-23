@@ -1,0 +1,13 @@
+root:/$ mkdir: File exists
+root:/$ mkdir: File exists
+root:/$ root:/$ root:/$ mkdir: File exists
+root:/$ mkdir: File exists
+root:/$ mkdir: Ancestor directory does not exist
+root:/$ mkdir: Ancestor directory does not exist
+root:/$ root:/$ root:/$ drwxr-x root exist dir
+-rw-r-- root exist file
+drwxr-x root test_w_permission
+drwxr-x root test_x_permission
+root:/$ root:/$ root:/$ root:/$ user:/$ mkdir: Permission denied
+user:/$ mkdir: Permission denied
+user:/$ bye, user

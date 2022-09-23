@@ -1,0 +1,18 @@
+mkdir ..
+mkdir .
+touch "exist file"
+mkdir "exist dir"
+mkdir "exist file"
+mkdir "exist dir"
+mkdir "exist file/newdir"
+mkdir "ancestor/ancestor not exist"
+mkdir test_w_permission
+mkdir -p test_x_permission/parent
+ls -l
+chmod o-w test_w_permission
+chmod o-x test_x_permission
+adduser user
+su user
+mkdir test_w_permission/b
+mkdir test_x_permission/parent/c
+exit

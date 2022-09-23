@@ -1,0 +1,8 @@
+mv too many arguments
+mv -q path1 path2
+mv
+mv "" "" ""
+mv "" path2
+mv @#!
+mv only_one_arg
+exit

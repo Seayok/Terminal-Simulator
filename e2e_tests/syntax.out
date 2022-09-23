@@ -1,0 +1,21 @@
+root:/$ mkdir: Invalid syntax
+root:/$ root:/$ random: Command not found
+root:/$ mkdir: Invalid syntax
+root:/$ root:/$ cd: Invalid syntax
+root:/$ cd: Invalid syntax
+root:/$ root:/$ cd: Destination is a file
+root:/$ /
+root:/$ touch: Invalid syntax
+root:/$ pwd: Invalid syntax
+root:/$ $: Invalid syntax
+root:/$ root:/$ root:/$ drwxr-x root -d
+drwxr-x root .
+drwxr-x root ..
+drwxr-x root ...
+drwxr-x root 1z31
+drwxr-x root mkdir
+-rw-r-- root trailing whitespace after this
+root:/$ exit: Invalid syntax
+root:/$ root:/$ root:/$ ls: Invalid syntax
+root:/$ ls: No such file or directory
+root:/$ bye, root

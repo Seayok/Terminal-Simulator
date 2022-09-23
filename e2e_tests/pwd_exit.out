@@ -1,0 +1,13 @@
+root:/$ pwd: Invalid syntax
+root:/$ pwd: Invalid syntax
+root:/$ pwd: Invalid syntax
+root:/$ /
+root:/$ root:/$ root:/pwd/a/b/c/d$ /pwd/a/b/c/d
+root:/pwd/a/b/c/d$ Pwd: Command not found
+root:/pwd/a/b/c/d$ pWd: Command not found
+root:/pwd/a/b/c/d$ pwd: Invalid syntax
+root:/pwd/a/b/c/d$ /pwd/a/b/c/d
+root:/pwd/a/b/c/d$ exit: Invalid syntax
+root:/pwd/a/b/c/d$ exit: Invalid syntax
+root:/pwd/a/b/c/d$ Exit: Command not found
+root:/pwd/a/b/c/d$ root:/pwd/a/b/c/d$ exit with this name:/pwd/a/b/c/d$ bye, exit with this name

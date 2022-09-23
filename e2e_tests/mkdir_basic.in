@@ -1,0 +1,29 @@
+adduser user
+mkdir dir
+mkdir "dir/sample dir"
+mkdir /dir/another_sample_dir
+mkdir /dir/.hiddendir
+ls -l
+ls -l dir
+ls -l -a dir
+
+
+mkdir -p "a/b/a/b/a/a/test same parent and children same name"
+cd a/b/a/b/a/a
+pwd
+
+cd /
+mkdir test_different_path
+cd test_different_path
+mkdir -p a/.d
+mkdir a/b/../d
+ls -l
+ls -l -a a
+mkdir a/b
+mkdir -a
+mkdir -p
+mkdir -p -a/d
+mkdir a/.
+ls -l
+ls -l a
+exit

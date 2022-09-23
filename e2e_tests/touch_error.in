@@ -1,0 +1,15 @@
+touch @a
+touch many arguments
+touch
+Touch
+touch -p -p
+adduser user
+touch non_exist/b.txt
+mkdir -p "test permission/xbit"
+chmod a=rw "test permission"
+su user
+ls -l -d -a
+touch "test permission/xbit/file"
+touch test_parent_write.txt
+touch b/c/d/a.txt
+exit

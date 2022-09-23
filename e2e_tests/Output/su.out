@@ -1,8 +1,0 @@
-root:/$ root:/$ user1:/$ su: Invalid user
-user1:/$ adduser: Operation not permitted
-user1:/$ su: Invalid user
-user1:/$ adduser: Operation not permitted
-user1:/$ su: Invalid user
-user1:/$ su: Invalid syntax
-user1:/$ s"u": Invalid syntax
-user1:/$ root:/$ bye, root

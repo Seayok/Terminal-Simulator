@@ -1,0 +1,15 @@
+mkdir -p recursive/dir/dir1
+touch recursive/file1
+touch recursive/dir/file2
+adduser user
+chown -r user recursive
+ls -l
+ls -l recursive
+ls -l recursive/dir
+chown -r root recursive
+ls -l recursive
+chown -r user /
+ls -l -d -a
+ls -l recursive
+ls -l recursive/dir
+exit

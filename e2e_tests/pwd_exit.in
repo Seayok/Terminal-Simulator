@@ -1,0 +1,17 @@
+pwd pwd
+pwd $
+pwd @
+pwd
+mkdir -p pwd/a/b/c/d
+cd pwd/a/b/c/d
+pwd
+Pwd
+pWd
+pwd many arguments
+"pwd"
+exit exit
+exit @
+Exit
+adduser "exit with this name"
+su "exit with this name"
+exit

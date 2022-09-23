@@ -1,0 +1,3 @@
+root:/$ root:/$ adduser: The user already exists
+root:/$ user1:/$ adduser: Operation not permitted
+user1:/$ bye, user1

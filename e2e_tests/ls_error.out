@@ -1,0 +1,11 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ user1:/$ ls: Permission denied
+user1:/$ ls: Permission denied
+user1:/$ ls: Permission denied
+user1:/$ ls: Permission denied
+user1:/$ root:/$ root:/$ root:/$ root:/$ user1:/$ drwxr-x user1 .
+drwxr-x root ..
+user1:/$ drwxr-x user1 file_parent_not_r_perm/dir
+user1:/$ -rw-r-- user1 file_parent_not_r_perm/file
+user1:/$ drwxr-x user1 ancestor_not_x/parent/dir
+user1:/$ ls: No such file or directory
+user1:/$ bye, user1

@@ -1,0 +1,83 @@
+mkdir -p testdir/dir
+touch testdir/file
+touch testfile
+ls -d 
+ls -d -a
+ls -d -l
+ls -d -a -l
+ls -a
+ls -a -l
+ls -l
+ls
+cd testdir/dir
+  ls -d .
+ls   -d -a .
+ls -d   -l .
+ls -d  -a -l .
+ls -a .
+  ls -a -l .
+ls -l .
+ls .
+ls -d ..
+ls   -d -a ..
+ls -d   -l ..
+ls -d  -a -l ..
+ls -a ..
+  ls -a -l ..
+ls -l ..
+ls ..
+cd /
+ls -d testdir
+ls   -d -a testdir
+ls -d   -l testdir
+ls -d  -a -l testdir
+ls -a testdir
+  ls -a -l testdir
+ls -l testdir
+ls testdir
+ls -d ../.././testdir/dir
+ls   -d -a ../.././testdir/dir
+ls -d   -l /.././././testdir/dir
+ls -d  -a -l ../././testdir/dir
+ls -a /../././testdir/dir
+  ls -a -l /../.././testdir/dir
+ls -l ./testdir/dir
+ls /../../testdir/dir
+ls -d testdir/file
+ls   -d -a testdir/file
+ls -d   -l testdir/file
+ls -d  -a -l testdir/file
+ls -a testdir/file
+  ls -a -l testdir/file
+ls -l testdir/file
+ls testdir/file
+ls -d /testdir/file
+ls   -d -a /testdir/file
+ls -d   -l /testdir/file
+ls -d  -a -l /testdir/file
+ls -a /testdir/file
+  ls -a -l /testdir/file
+ls -l /testdir/file
+ls /testdir/file
+ls -d ../.././testdir/file
+ls   -d -a ../.././testdir/file
+ls -d   -l ./../../testdir/file
+ls -d  -a -l ./../../testdir/file
+ls -a ../../././testdir/file
+  ls -a -l ./././testdir/file
+ls -l ././.././testdir/file
+ls ../../../testdir/file
+
+mkdir -l
+ls -d -a -l
+ls -d -a "-l"
+ls -d -a -l -l
+mkdir a
+mkdir mkdir
+
+ls ls
+ls ""
+mkdir ls
+touch ls/c
+ls ls
+exit

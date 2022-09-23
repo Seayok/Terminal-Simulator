@@ -1,0 +1,6 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ drwxr-x root .
+drwxr-x root ..
+drwxr-x testuser dir
+-rw-r-- testuser file
+root:/$ root:/$ drwxr-x testuser .
+root:/$ bye, root

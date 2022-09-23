@@ -1,0 +1,27 @@
+mkdir lack_r_perm
+mkdir -p file_parent_not_r_perm/dir
+touch file_parent_not_r_perm/file
+mkdir -p ancestor_not_x/parent/dir
+chmod a-r lack_r_perm
+chmod a-r file_parent_not_r_perm
+chmod a-x ancestor_not_x
+adduser user1
+chown user1 lack_r_perm
+chown -r user1 file_parent_not_r_perm
+chown -r user1 ancestor_not_x
+su user1
+ls -a -l lack_r_perm
+ls -a -l -d file_parent_not_r_perm/dir
+ls -a -l file_parent_not_r_perm/file
+ls -a -l -d ancestor_not_x/parent/dir
+su
+chmod a+r lack_r_perm
+chmod a+r file_parent_not_r_perm
+chmod a+x ancestor_not_x
+su user1
+ls -a -l lack_r_perm
+ls -a -l -d file_parent_not_r_perm/dir
+ls -a -l file_parent_not_r_perm/file
+ls -a -l -d ancestor_not_x/parent/dir
+ls "not exist path/a/b/c"
+exit

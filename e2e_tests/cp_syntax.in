@@ -1,0 +1,8 @@
+cp too many arguments
+cp -q path1 path2
+cp
+cp "" "" ""
+cp "" path2
+cp @#!
+cp only_one_arg
+exit

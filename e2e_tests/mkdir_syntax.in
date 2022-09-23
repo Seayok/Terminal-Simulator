@@ -1,0 +1,16 @@
+mkdir "      test"
+mkdir mkdir
+mkdir .hidden
+mkdir ...
+ls -a -l
+mkdir ""
+mkdir
+mkdir -t newdir
+mkdir !!!
+mkdir too many arguments
+Mkdir
+mkdir a/
+mkdir //
+mkdir @!#
+M@kEdIr
+exit

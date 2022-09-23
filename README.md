@@ -1,18 +1,8 @@
-Every command will have their own tests
-Because I cant command in 
-There will be raw output and pretty output
-Pretty output will be stored in Output
-Raw output will be stored in Raw
-pwd_exit: test syntax and argument 
-cd: test relative path, full path, ".." and ".", permission, does not exist, dst is file.
-mkdir:
-mv:
-cp:
-rm:
-rmdir:
-chmod:
-chown:
-adduser:
-deluser:
-su:
-ls:
+.in and .out files will be in e2e_tests
+.out files are expected stdout when stdin of the program is .in files with similar name
+
+I also create a test.sh so that it will be easier to inspect output the program manually with a prettified form of the output.
+To run the script:
+1/ Current working directory is the one contains nautilus.py
+2/ Run e2e_tests/Scripts_And_Pretty_Output/test.sh
+3/ Pretty ouput will be generated inside Pretty_Output folder

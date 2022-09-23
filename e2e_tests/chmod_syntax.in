@@ -1,0 +1,20 @@
+touch test
+chmod "o+   x" test
+chmod a-r test
+ls -l
+chmod -x test
+ls -l
+chmod a+ test
+ls -l
+chmod a+-=x test
+touch test_invalid_mode
+chmod a+=x test_invalid_mode
+ls -l
+chmod a==rwx test_invalid_mode
+chmod b+r test_invalid_mode
+chmod u test_invalid_mode
+chmod a+rui test_invalid_mode
+chmod a"r test_invalid_mode
+chmod $@#=@#
+chmod 
+exit

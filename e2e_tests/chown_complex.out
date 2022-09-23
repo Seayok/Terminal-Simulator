@@ -1,0 +1,13 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ drwxr-x user recursive
+root:/$ drwxr-x user dir
+-rw-r-- user file1
+root:/$ drwxr-x user dir1
+-rw-r-- user file2
+root:/$ root:/$ drwxr-x root dir
+-rw-r-- root file1
+root:/$ root:/$ drwxr-x user .
+root:/$ drwxr-x user dir
+-rw-r-- user file1
+root:/$ drwxr-x user dir1
+-rw-r-- user file2
+root:/$ bye, root

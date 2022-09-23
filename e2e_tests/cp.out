@@ -1,0 +1,47 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ -rw-r-- root normal.txt
+root:/$ -rw-r-- root normal_copy.txt
+root:/$ cp: No such file
+root:/$ root:/$ root:/$ -rwxrwx root copythis.txt
+drwxr-x root normal1
+drwxr-x root normal2
+root:/$ root:/$ user:/$ user:/$ -rw-r-- user copyofcopythis.txt
+-rwxrwx root copythis.txt
+drwxr-x root normal1
+drwxr-x root normal2
+user:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ user:/$ cp: No such file or directory
+user:/$ user:/$ cp: Permission denied
+user:/$ root:/$ root:/$ user:/$ user:/$ -rw-r-- user lack_r
+user:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ user:/$ cp: Permission denied
+user:/$ root:/$ root:/$ user:/$ user:/$ drwxrwx root an1
+-rw-r-- user copyofcopythis.txt
+-rwxrwx root copythis.txt
+-rw-rwx root lack_r.txt
+-rw-r-- user lack_src_x.txt
+-rw-r-- root lack_x.txt
+drwxr-x root normal1
+drwxr-x root normal2
+drwxr-x user sampledir
+user:/$ root:/$ root:/$ root:/$ user:/$ cp: Permission denied
+user:/$ root:/$ root:/$ user:/$ user:/$ drwxrwx root .
+drwxrwx root ..
+-rw-r-- user lack.txt
+-rw-r-- root lack_x.txt
+user:/$ root:/$ root:/$ user:/$ cp: Permission denied
+user:/$ root:/$ root:/$ user:/$ user:/$ drwxrwx root an1
+-rw-r-- user copyofcopythis.txt
+-rwxrwx root copythis.txt
+-rw-r-- user lack_dest_w.txt
+-rw-r-- root lack_dest_x.txt
+-rw-rwx root lack_r.txt
+-rw-r-- user lack_src_x.txt
+-rw-r-- root lack_x.txt
+drwxr-x root normal1
+drwxr-x root normal2
+drwxr-x user sampledir
+user:/$ user:/$ user:/$ root:/$ root:/$ root:/$ cp: File exists
+root:/$ cp: No such file
+root:/$ cp: Destination is a directory
+root:/$ cp: File exists
+root:/$ cp: Source is a directory
+root:/$ cp: No such file or directory
+root:/$ bye, root

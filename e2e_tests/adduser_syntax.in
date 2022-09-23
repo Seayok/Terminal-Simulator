@@ -1,0 +1,8 @@
+add:user user1
+adduser 'invalid one'
+adduser "1"12
+adduser too many arguments
+adduser $-2#2-!@
+adduser thisuserhave/inname
+adduser -r user1
+exit

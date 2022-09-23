@@ -1,0 +1,22 @@
+mkdir a"n a"pple
+mkdir "-d"
+random stuff
+mkdir -p "-e /asd"
+mkdir 1z31
+cd /a//b///c/d
+cd a/b/c/d//
+touch "trailing whitespace after this"                          
+cd "trailing whitespace after this"
+pwd
+touch @a
+pwd pwd
+$ 
+mkdir mkdir
+mkdir ...
+ls -l -a
+exit exit
+ls                 -l             -d
+ls       "-l"      "-d"
+ls       "-d -l -a"   .
+ls     "  -l"
+exit

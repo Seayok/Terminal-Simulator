@@ -1,0 +1,10 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ -rw-r-- root -a
+-rw-r-- root -p
+drwxr-x root .
+drwxr-x root ..
+drwxr-x root b
+-rw-r-- root test.txt
+root:/$ drwxr-x root .
+drwxr-x root ..
+-rw-r-- root newfile
+root:/$ bye, root

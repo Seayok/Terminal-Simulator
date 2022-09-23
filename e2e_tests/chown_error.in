@@ -1,0 +1,8 @@
+mkdir testdir
+chown non_existed_user testdir
+adduser user1
+su user1
+chown user1 testdir
+su
+chown user1 non_existed_path/file
+exit

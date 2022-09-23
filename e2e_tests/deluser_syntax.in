@@ -1,0 +1,9 @@
+deluser @!3
+        deluser "@idsf"afasd
+adduser 'invalid one'
+adduser             "valid one"
+            deluser "valid one"
+adduser user1
+deluser user1 too many arg
+deluser -r user1
+exit

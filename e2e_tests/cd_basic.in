@@ -1,0 +1,13 @@
+mkdir dir
+mkdir "another dir"
+mkdir -p "another dir/b/c/d"
+ls -l
+cd dir
+cd "/another dir/b/c/d"
+pwd
+cd .
+cd ..
+cd .
+cd ../../.././../../dir/./..
+pwd
+exit

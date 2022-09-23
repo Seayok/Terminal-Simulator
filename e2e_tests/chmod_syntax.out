@@ -1,0 +1,17 @@
+root:/$ root:/$ chmod: Invalid mode
+root:/$ root:/$ --w---- root test
+root:/$ chmod: Invalid syntax
+root:/$ --w---- root test
+root:/$ root:/$ --w---- root test
+root:/$ chmod: Invalid mode
+root:/$ root:/$ chmod: Invalid mode
+root:/$ --w---- root test
+-rw-r-- root test_invalid_mode
+root:/$ chmod: Invalid mode
+root:/$ chmod: Invalid mode
+root:/$ chmod: Invalid mode
+root:/$ chmod: Invalid mode
+root:/$ chmod: Invalid syntax
+root:/$ chmod: Invalid syntax
+root:/$ chmod: Invalid syntax
+root:/$ bye, root

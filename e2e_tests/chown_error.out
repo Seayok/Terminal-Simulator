@@ -1,0 +1,4 @@
+root:/$ root:/$ chown: Invalid user
+root:/$ root:/$ user1:/$ chown: Operation not permitted
+user1:/$ root:/$ chown: No such file or directory
+root:/$ bye, root

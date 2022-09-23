@@ -1,0 +1,7 @@
+deluser non_existed_user
+adduser user1
+su user1
+deluser root
+su
+deluser root
+exit

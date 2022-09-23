@@ -1,0 +1,15 @@
+mkdir dir
+adduser user1
+adduser user2
+adduser user3
+chown "-r" user1 dir
+ls -l
+chown         -r         user2       dir
+ls -l
+    "chown"      "-r"     "user3"   "dir"
+ls -ls
+chown  -q user3 dir
+chOwn
+chown onearg
+chown too many arg
+exit

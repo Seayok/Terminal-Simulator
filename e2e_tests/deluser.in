@@ -1,0 +1,6 @@
+adduser testuser
+su testuser
+su
+deluser testuser
+su testuser
+exit

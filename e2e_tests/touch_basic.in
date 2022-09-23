@@ -1,0 +1,12 @@
+touch .
+touch ..
+touch -a
+touch -p
+touch test.txt
+touch test.txt
+mkdir b
+touch b
+touch b/newfile
+ls -l -a
+ls -l -a b
+exit

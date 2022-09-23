@@ -1,0 +1,8 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ drwxr-x user1 dir
+root:/$ root:/$ drwxr-x user2 dir
+root:/$ root:/$ ls: No such file or directory
+root:/$ chown: Invalid syntax
+root:/$ chOwn: Command not found
+root:/$ chown: Invalid syntax
+root:/$ chown: Invalid syntax
+root:/$ bye, root

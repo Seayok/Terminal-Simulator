@@ -1,0 +1,84 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ .
+root:/$ root:/$ drwxr-x root .
+root:/$ .
+..
+testdir
+testfile
+root:/$ drwxr-x root .
+drwxr-x root ..
+drwxr-x root testdir
+-rw-r-- root testfile
+root:/$ drwxr-x root testdir
+-rw-r-- root testfile
+root:/$ testdir
+testfile
+root:/$ root:/testdir/dir$ root:/testdir/dir$ .
+root:/testdir/dir$ root:/testdir/dir$ drwxr-x root .
+root:/testdir/dir$ .
+..
+root:/testdir/dir$ drwxr-x root .
+drwxr-x root ..
+root:/testdir/dir$ root:/testdir/dir$ root:/testdir/dir$ root:/testdir/dir$ ..
+root:/testdir/dir$ root:/testdir/dir$ drwxr-x root ..
+root:/testdir/dir$ .
+..
+dir
+file
+root:/testdir/dir$ drwxr-x root .
+drwxr-x root ..
+drwxr-x root dir
+-rw-r-- root file
+root:/testdir/dir$ drwxr-x root dir
+-rw-r-- root file
+root:/testdir/dir$ dir
+file
+root:/testdir/dir$ root:/$ testdir
+root:/$ testdir
+root:/$ drwxr-x root testdir
+root:/$ drwxr-x root testdir
+root:/$ .
+..
+dir
+file
+root:/$ drwxr-x root .
+drwxr-x root ..
+drwxr-x root dir
+-rw-r-- root file
+root:/$ drwxr-x root dir
+-rw-r-- root file
+root:/$ dir
+file
+root:/$ root:/$ ../.././testdir/dir
+root:/$ drwxr-x root /.././././testdir/dir
+root:/$ drwxr-x root ../././testdir/dir
+root:/$ .
+..
+root:/$ drwxr-x root .
+drwxr-x root ..
+root:/$ root:/$ root:/$ testdir/file
+root:/$ testdir/file
+root:/$ -rw-r-- root testdir/file
+root:/$ -rw-r-- root testdir/file
+root:/$ testdir/file
+root:/$ -rw-r-- root testdir/file
+root:/$ -rw-r-- root testdir/file
+root:/$ testdir/file
+root:/$ /testdir/file
+root:/$ /testdir/file
+root:/$ -rw-r-- root /testdir/file
+root:/$ -rw-r-- root /testdir/file
+root:/$ /testdir/file
+root:/$ -rw-r-- root /testdir/file
+root:/$ -rw-r-- root /testdir/file
+root:/$ /testdir/file
+root:/$ root:/$ ../.././testdir/file
+root:/$ root:/$ -rw-r-- root ./../../testdir/file
+root:/$ ../../././testdir/file
+root:/$ -rw-r-- root ./././testdir/file
+root:/$ root:/$ root:/$ root:/$ root:/$ drwxr-x root .
+root:/$ -l
+root:/$ drwxr-x root -l
+root:/$ root:/$ root:/$ root:/$ ls: No such file or directory
+root:/$ ls: Invalid syntax
+root:/$ root:/$ root:/$ c
+root:/$ bye, root

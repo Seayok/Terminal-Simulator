@@ -1,0 +1,20 @@
+root:/$ root:/$ root:/$ root:/$ root:/$ root:/$ drwxr-x root dir
+root:/$ drwxr-x root another_sample_dir
+drwxr-x root sample dir
+root:/$ drwxr-x root .
+drwxr-x root ..
+drwxr-x root .hiddendir
+drwxr-x root another_sample_dir
+drwxr-x root sample dir
+root:/$ root:/$ root:/$ root:/$ root:/a/b/a/b/a/a$ /a/b/a/b/a/a
+root:/a/b/a/b/a/a$ root:/a/b/a/b/a/a$ root:/$ root:/$ root:/test_different_path$ root:/test_different_path$ mkdir: Ancestor directory does not exist
+root:/test_different_path$ drwxr-x root a
+root:/test_different_path$ drwxr-x root .
+drwxr-x root ..
+drwxr-x root .d
+root:/test_different_path$ root:/test_different_path$ root:/test_different_path$ root:/test_different_path$ root:/test_different_path$ mkdir: File exists
+root:/test_different_path$ drwxr-x root -a
+drwxr-x root -p
+drwxr-x root a
+root:/test_different_path$ drwxr-x root b
+root:/test_different_path$ bye, root

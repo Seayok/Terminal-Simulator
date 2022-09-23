@@ -1,0 +1,6 @@
+ls -d -q
+mkdir -q
+ls -d -q 
+ls -q -e -f
+        ls              -d         -l "-a"..
+exit
