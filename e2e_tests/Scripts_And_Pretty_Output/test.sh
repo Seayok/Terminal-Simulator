@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir e2e_tests/Pretty_Output
+mkdir e2e_tests/Scripts_And_Pretty_Output/Pretty_Output
 IFS=$'\n'
 test_list=`ls -l e2e_tests | awk '$9 ~ ".*\.in$" {print $9}'|awk 'BEGIN{FS="."} {print $1}' |tail -n+1`
 for command in $test_list
