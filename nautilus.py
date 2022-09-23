@@ -151,7 +151,7 @@ def check_and_split_syntax(cmd):
     command, remain = split_arg(cmd)
     valid = check_invalid_char(command)
 
-    # Group different command with the same syntax to group
+    # Group different command with the same syntax to different groups
     if command in ('exit', 'pwd') and remain != '':
         valid = False
 
@@ -159,20 +159,23 @@ def check_and_split_syntax(cmd):
         if command == "ls":
             valid_flag, path_1 = check_flag(remain,
                                             ["-a", "-d", "-l"], flag_list)
-        elif command in 'mkdir':
+        elif command == 'mkdir':
             valid_flag, path_1 = check_flag(remain, ["-p"], flag_list)
         else:
             path_1 = remain
+        # Ls command can recieve empty path
         if valid_flag and not (command == 'ls' and path_1 == ''):
             path_1, remain = split_arg(path_1)
             valid_path = check_path(path_1) and remain == ''
 
     elif command in ('adduser', 'deluser', 'su'):
+        # Su command can recieve empty path
         if not (command == "su" and remain == ''):
             user, remain = split_arg(remain)
             valid_user = check_invalid_char(user) and remain == ''
 
     elif command in ('cp', 'mv'):
+        # Cp and mv recieve 2 paths
         path_1, remain = split_arg(remain)
         path_2, remain = split_arg(remain)
         valid_path = check_path(path_1) and check_path(path_2) and remain == ''
@@ -201,7 +204,9 @@ def check_and_split_syntax(cmd):
         path_1 = path_1.split("/")
 
     path_list.insert(0, path_1)
+
     valid = valid and valid_flag and valid_user and valid_path
+    
     return (valid, command, path_list, flag_list,
             user, format_string, valid_format)
 
