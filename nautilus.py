@@ -138,7 +138,6 @@ def check_and_split_syntax(cmd):
     # The program will read and split arg by arg one at the time
     # The delimiter is setted to " or " " depends on split_arg function
     flag_list = []
-    valid_flag = True
     valid_path = True
     valid_format = True
     valid = True
@@ -157,14 +156,14 @@ def check_and_split_syntax(cmd):
 
     elif command in ('touch', 'cd', 'rm', 'rmdir', 'mkdir', 'ls'):
         if command == "ls":
-            valid_flag, path_1 = check_flag(remain,
+            path_1 = check_flag(remain,
                                             ["-a", "-d", "-l"], flag_list)
         elif command == 'mkdir':
-            valid_flag, path_1 = check_flag(remain, ["-p"], flag_list)
+            path_1 = check_flag(remain, ["-p"], flag_list)
         else:
             path_1 = remain
         # Ls command can recieve empty path
-        if valid_flag and not (command == 'ls' and path_1 == ''):
+        if not (command == 'ls' and path_1 == ''):
             path_1, remain = split_arg(path_1)
             valid_path = check_path(path_1) and remain == ''
 
@@ -183,20 +182,19 @@ def check_and_split_syntax(cmd):
         path_list.append(path_2)
 
     elif command in ('chmod', 'chown'):
-        valid_flag, remain = check_flag(remain, ["-r"], flag_list)
-        if valid_flag:
-            if command == "chmod":
-                format_string, remain = split_arg(remain)
-                path_1, remain = split_arg(remain)
-                if not check_invalid_char(format_string, ["=", "-", "+"]):
-                    valid = False
-                valid_format = check_format_string(format_string)
-                valid_path = check_path(path_1) and remain == ''
-            else:
-                user, remain = split_arg(remain)
-                path_1, remain = split_arg(remain)
-                valid_path = check_path(path_1) and remain == ''
-                valid_user = check_invalid_char(user)
+        remain = check_flag(remain, ["-r"], flag_list)
+        if command == "chmod":
+            format_string, remain = split_arg(remain)
+            path_1, remain = split_arg(remain)
+            if not check_invalid_char(format_string, ["=", "-", "+"]):
+                valid = False
+            valid_format = check_format_string(format_string)
+            valid_path = check_path(path_1) and remain == ''
+        else:
+            user, remain = split_arg(remain)
+            path_1, remain = split_arg(remain)
+            valid_path = check_path(path_1) and remain == ''
+            valid_user = check_invalid_char(user)
 
     if path_1 == '':
         path_1 = []
@@ -205,7 +203,7 @@ def check_and_split_syntax(cmd):
 
     path_list.insert(0, path_1)
 
-    valid = valid and valid_flag and valid_user and valid_path
+    valid = valid and valid_user and valid_path
     
     return (valid, command, path_list, flag_list,
             user, format_string, valid_format)
@@ -257,11 +255,13 @@ def check_flag(remain: str, valid_flag: list,
     # Check for syntax form: -char or "-char" until the last argument
     while ((len(remain) > 2 and remain[0] == "-" and remain[2] == " ") or
            (len(remain) > 4 and remain[0] == "\"" and remain[1] == "-")):
+        prev_remain = remain
         flag, remain = split_arg(remain)
         if flag in valid_flag and flag not in flag_list:
             flag_list.append(flag)
         else:
-            return (False, '')
+            remain = prev_remain
+            break
 
     # Ls command can have flag as a last argument
     # This if condition is to check if it is a flag or path
@@ -270,7 +270,7 @@ def check_flag(remain: str, valid_flag: list,
     if "-l" in valid_flag and remain in valid_flag and remain not in flag_list:
         flag_list.append(remain)
         remain = ''
-    return (True, remain)
+    return remain
 
 
 def split_arg(string):
