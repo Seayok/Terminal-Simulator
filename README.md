@@ -1,4 +1,4 @@
-#README
+# README
 
 .in and .out files will be in e2e_tests
 .out files are expected stdout when stdin of the program is .in files with similar name
